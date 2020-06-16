@@ -46,6 +46,18 @@ public class CurrentSession {
         lastItemEnd = item.getGameEnd();
     }
 
+    public Map<String, SessionService> getServices() {
+        return services;
+    }
+
+    public Deque<SessionItem> getItems() {
+        return items;
+    }
+
+    public long getSessionEnd() {
+        return sessionEnd;
+    }
+
     private SessionItem createHubItem(long start, long end) {
         return new SessionItem.Builder("HUB")
                 .gameStart(start)

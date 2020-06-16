@@ -48,6 +48,7 @@ dependencies {
     embed group: 'pw.roccodev.beezig', name: 'hive-api-wrapper', version: '3.0-async-alpha'
     embed group: 'net.sourceforge.javacsv', name: 'javacsv', version: '2.0'
     embed group: 'com.intellij', name: 'forms_rt', version: '7.0.3'
+    embed group: 'org.freemarker', name: 'freemarker', version: '2.3.30'
 
     compile group: 'eu.5zigreborn', name: 'plugin-api', version: '3.14.1'
     compile group: 'com.mojang', name: 'authlib', version: '1.6.25'

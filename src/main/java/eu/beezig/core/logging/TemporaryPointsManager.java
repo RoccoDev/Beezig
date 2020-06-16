@@ -22,6 +22,7 @@ package eu.beezig.core.logging;
 import com.csvreader.CsvWriter;
 import eu.beezig.core.Beezig;
 import eu.beezig.core.data.GameTitles;
+import eu.beezig.core.logging.reports.DailyReportManager;
 import eu.beezig.core.logging.session.CurrentSession;
 import eu.beezig.core.server.HiveMode;
 import eu.beezig.core.util.UUIDUtils;
@@ -51,6 +52,11 @@ public class TemporaryPointsManager {
     private static final Pattern DAILY_FILE_REGEX = Pattern.compile("(\\d{4}-\\d{1,2}-\\d{1,2})(?:-(.+))?\\.txt");
 
     private CurrentSession currentSession;
+    private DailyReportManager dailyReportManager = new DailyReportManager();
+
+    public DailyReportManager getDailyReportManager() {
+        return dailyReportManager;
+    }
 
     public CurrentSession getCurrentSession() {
         return currentSession;

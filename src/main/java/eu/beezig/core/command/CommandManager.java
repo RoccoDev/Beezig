@@ -37,6 +37,7 @@ public class CommandManager {
         commandExecutors.add(new SettingsCommand());
         commandExecutors.add(new CustomTestCommand());
         commandExecutors.add(new DoNotDisturbCommand());
+        commandExecutors.add(new GenReportCommand());
     }
 
     @EventHandler
