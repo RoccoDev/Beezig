@@ -36,4 +36,8 @@ public class TextButton extends MessageComponent {
     public void doRunCommand(String command) {
         getStyle().setOnClick(new MessageAction(MessageAction.Action.RUN_COMMAND, command));
     }
+
+    public void doOpenFile(String file) {
+        getStyle().setOnClick(new MessageAction(MessageAction.Action.OPEN_FILE, file));
+    }
 }

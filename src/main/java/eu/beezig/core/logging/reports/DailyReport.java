@@ -29,7 +29,6 @@ import freemarker.template.TemplateException;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
@@ -81,12 +80,13 @@ public class DailyReport {
         Map<String, Object> root = new HashMap<>();
         root.put("report", this);
         Template template = ftl.getTemplate("daily_report.ftl");
-        try(Writer out = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8, StandardOpenOption.CREATE)) {
+        try(Writer out = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8,
+                StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
             template.process(root, out);
         }
     }
 
-    public URI getOpenURI() {
-        return file.toURI();
+    public String getOpenURI() {
+        return file.getAbsolutePath();
     }
 }

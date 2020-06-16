@@ -21,7 +21,10 @@ package eu.beezig.core.command.commands;
 
 import eu.beezig.core.Beezig;
 import eu.beezig.core.command.Command;
+import eu.beezig.core.logging.reports.DailyReport;
+import eu.beezig.core.util.Color;
 import eu.beezig.core.util.text.Message;
+import eu.beezig.core.util.text.TextButton;
 import freemarker.template.TemplateException;
 
 import java.io.IOException;
@@ -45,7 +48,10 @@ public class GenReportCommand implements Command {
         }
         if(Beezig.get().getTemporaryPointsManager() != null) {
             try {
-                Beezig.get().getTemporaryPointsManager().getDailyReportManager().generateDailyReport(args[0]);
+                DailyReport report = Beezig.get().getTemporaryPointsManager().getDailyReportManager().generateDailyReport(args[0]);
+                TextButton btn = new TextButton("Open", "Open the file", Color.accent());
+                btn.doOpenFile(report.getOpenURI());
+                Beezig.api().messagePlayerComponent(btn, false);
             } catch (IOException | TemplateException e) {
                 Beezig.logger.error("Couldn't generate report", e);
                 Message.error(Message.translate("error.data_read"));
