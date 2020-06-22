@@ -20,6 +20,7 @@
 package eu.beezig.core.data;
 
 import eu.beezig.core.Beezig;
+import eu.beezig.core.autogg.AutoGGManager;
 import eu.beezig.core.data.timv.TestMessagesManager;
 import eu.beezig.core.util.FileUtils;
 import eu.beezig.core.util.text.Message;
@@ -47,12 +48,15 @@ public class BeezigData {
     private File dataFolder;
     private GameTitles titleManager;
     private TestMessagesManager customTestMessages;
+    private AutoGGManager autoGGManager;
 
     public BeezigData(File beezigDir) {
         this.dataFolder = new File(beezigDir, "data");
         this.titleManager = new GameTitles(dataFolder);
         this.customTestMessages = new TestMessagesManager();
         Beezig.api().getPluginManager().registerListener(Beezig.get(), customTestMessages);
+        this.autoGGManager = new AutoGGManager();
+        Beezig.api().getPluginManager().registerListener(Beezig.get(), autoGGManager);
     }
 
     public GameTitles getTitleManager() {
@@ -61,6 +65,10 @@ public class BeezigData {
 
     public TestMessagesManager getCustomTestMessages() {
         return customTestMessages;
+    }
+
+    public AutoGGManager getAutoGGManager() {
+        return autoGGManager;
     }
 
     public <T> T getData(DataPath path, Class<T> marker) throws IOException {

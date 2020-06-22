@@ -101,6 +101,7 @@ public class ServerHive extends ServerInstance {
         });
         if(Beezig.get().getTemporaryPointsManager() != null)
             Beezig.get().getTemporaryPointsManager().startSession();
+        Beezig.get().getData().getAutoGGManager().initTriggers();
     }
 
     @Override

@@ -21,7 +21,8 @@ package eu.beezig.core.data;
 
 public enum DataPath {
     TIMV_MAPS("timv/maps.json"),
-    DR_MAPS("dr/maps.json");
+    DR_MAPS("dr/maps.json"),
+    AUTOGG_TRIGGERS("autogg-triggers.json");
 
     private final String path;
 
