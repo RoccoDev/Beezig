@@ -19,54 +19,28 @@
 
 package eu.beezig.core.autogg;
 
-import org.json.simple.JSONObject;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-import java.io.InvalidObjectException;
 import java.util.regex.Pattern;
 
 public class Trigger {
 
     public enum Type {
+        @SerializedName("CHAT")
         CHAT,
+        @SerializedName("TITLE")
         TITLE,
-        SUBTITLE;
-
-        public static Type getFromID(int id) {
-            switch (id) {
-                case 1:
-                    return TITLE;
-                case 2:
-                    return SUBTITLE;
-                default:
-                    return CHAT;
-            }
-        }
+        @SerializedName("SUBTITLE")
+        SUBTITLE
     }
 
+    @SerializedName("type")
+    @Expose
     private Type type;
+    @SerializedName("trigger")
+    @Expose
     private String trigger;
-
-    public Trigger(Type type, String trigger) {
-        this.type = type;
-        this.trigger = trigger;
-    }
-
-    public static Trigger fromJsonObject(JSONObject object) throws InvalidObjectException {
-        // Retrieve "trigger" from JSONObject
-        Object trigger = null;
-        if (object.containsKey("trigger"))
-            trigger = object.get("trigger");
-        if (!(trigger instanceof String))
-            throw new InvalidObjectException("Missing or malformed \"trigger\" in Trigger JSON object");
-        String pattern = (String) trigger;
-        // Retrieve "type" from JSONObject
-        Object type = null;
-        if (object.containsKey("type"))
-            type = object.get("type");
-        if (!(type instanceof Integer))
-            throw new InvalidObjectException("Missing or malformed \"type\" in Trigger JSON object");
-        return new Trigger(Type.getFromID((Integer) type), pattern);
-    }
 
     public boolean doesTrigger(String message, Type type){
         return Pattern.matches(trigger, message) && this.type == type;
