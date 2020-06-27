@@ -67,6 +67,11 @@ public class PacketBuffer implements AutoCloseable {
         size++;
     }
 
+    public void writeLong(long l) {
+        internal.writeLong(l);
+        size += 8;
+    }
+
     public UUID readUUID() {
         long lsb = internal.readLong();
         long msb = internal.readLong();
@@ -92,6 +97,10 @@ public class PacketBuffer implements AutoCloseable {
 
     public int readInt() {
         return internal.readInt();
+    }
+
+    public long readLong() {
+        return internal.readLong();
     }
 
     public byte readByte() {
