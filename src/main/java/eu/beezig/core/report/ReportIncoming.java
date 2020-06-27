@@ -1,15 +1,19 @@
 package eu.beezig.core.report;
 
 import eu.beezig.core.net.util.PacketBuffer;
+import eu.beezig.core.util.Color;
+import eu.beezig.core.util.text.StringUtils;
 
-import java.util.EnumSet;
+import java.util.Arrays;
 
 public class ReportIncoming {
     private ReportOutgoing.ReportType type;
     private int id;
     private String sender;
     private String[] targets;
-    private EnumSet<ReportReason> reasons;
+    private String[] reasons;
+    private String claimer;
+    private boolean handled;
 
     public ReportOutgoing.ReportType getType() {
         return type;
@@ -27,16 +31,24 @@ public class ReportIncoming {
         return targets;
     }
 
-    public EnumSet<ReportReason> getReasons() {
+    public String[] getReasons() {
         return reasons;
     }
 
-    private void setReasons(long bits) {
-        this.reasons = EnumSet.noneOf(ReportReason.class);
-        for(ReportReason reason : reasons) {
-            long bit = 1L << reason.getIndex();
-            if((bits & bit) == bit) reasons.add(reason);
-        }
+    public boolean isClaimed() {
+        return !claimer.isEmpty();
+    }
+
+    public boolean isHandled() {
+        return handled;
+    }
+
+    public String formatReasons() {
+        return Color.accent() + StringUtils.localizedJoin(Arrays.asList(reasons)) + Color.primary();
+    }
+
+    public String formatTargets() {
+        return Color.accent() + StringUtils.localizedJoin(Arrays.asList(targets)) + Color.primary();
     }
 
     public static ReportIncoming readFrom(PacketBuffer buffer) {
@@ -46,7 +58,10 @@ public class ReportIncoming {
         result.sender = buffer.readString();
         result.targets = new String[buffer.readInt()];
         for(int i = 0; i < result.targets.length; i++) result.targets[i] = buffer.readString();
-        result.setReasons(buffer.readLong());
+        result.reasons = new String[buffer.readInt()];
+        for(int i = 0; i < result.reasons.length; i++) result.reasons[i] = buffer.readString();
+        result.claimer = buffer.readString();
+        result.handled = buffer.readBoolean();
         return result;
     }
 }

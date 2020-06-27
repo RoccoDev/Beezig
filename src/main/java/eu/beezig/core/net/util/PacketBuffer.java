@@ -53,6 +53,13 @@ public class PacketBuffer implements AutoCloseable {
         size += bytes.length + 1;
     }
 
+    public void writeBigString(String s) {
+        byte[] bytes = s.getBytes(StandardCharsets.UTF_8);
+        internal.writeInt(bytes.length);
+        internal.writeBytes(bytes);
+        size += bytes.length + 4;
+    }
+
     public void writeEnum(Enum e) {
         writeInt(e.ordinal());
     }
@@ -92,6 +99,10 @@ public class PacketBuffer implements AutoCloseable {
         byte[] buf = new byte[internal.readInt()];
         internal.readBytes(buf);
         return buf;
+    }
+
+    public void writeBoolean(boolean b) {
+        writeByte((byte) (b ? 1 : 0));
     }
 
     public boolean readBoolean() {

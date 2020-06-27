@@ -2,17 +2,16 @@ package eu.beezig.core.command.commands;
 
 import eu.beezig.core.Beezig;
 import eu.beezig.core.command.Command;
-import eu.beezig.core.report.ReportReason;
+import eu.beezig.core.net.packets.PacketReport;
+import eu.beezig.core.report.ReportOutgoing;
 import eu.beezig.core.server.ServerHive;
 import eu.beezig.core.util.Color;
 import eu.beezig.core.util.text.Message;
 import eu.beezig.core.util.text.StringUtils;
 
 import java.util.Arrays;
-import java.util.EnumSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class ReportCommand implements Command {
     private static final Pattern REPORT_CMD_REGEX = Pattern.compile("(.+?)(?=(?<!,)\\s) (.+)$");
@@ -24,7 +23,7 @@ public class ReportCommand implements Command {
 
     @Override
     public String[] getAliases() {
-        return new String[] {"/report"};
+        return new String[] {"/breport"};
     }
 
     @Override
@@ -37,16 +36,11 @@ public class ReportCommand implements Command {
                 String gPlayers = m.group(1);
                 String gReasons = m.group(2);
                 String[] players = gPlayers.split(",\\s?");
-                String[] reasonInputs = gReasons.split("\\s");
-                EnumSet<ReportReason> reasons = ReportReason.getReasons(reasonInputs);
-                if(reasons.size() == 0) {
-                    Message.error(Message.translate("error.report.reason"));
-                    return true;
-                }
+                String[] reasons = gReasons.split("\\s");
                 String pDisplay = Color.accent() + StringUtils.localizedJoin(Arrays.asList(players)) + Color.primary();
-                String rDisplay = Color.accent() + StringUtils.localizedJoin(reasons.stream().map(ReportReason::getDisplay)
-                        .collect(Collectors.toList())) + Color.primary();
+                String rDisplay = Color.accent() + StringUtils.localizedJoin(Arrays.asList(reasons)) + Color.primary();
                 Message.info(Beezig.api().translate("msg.report.submit", pDisplay, rDisplay));
+                Beezig.net().getHandler().sendPacket(PacketReport.newReport(new ReportOutgoing(ReportOutgoing.ReportType.PLAYER, players, reasons)));
             }
         }
         sendUsage("/report [player1(, player2, player3)] [reason]");

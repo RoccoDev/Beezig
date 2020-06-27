@@ -2,14 +2,12 @@ package eu.beezig.core.report;
 
 import eu.beezig.core.net.util.PacketBuffer;
 
-import java.util.EnumSet;
-
 public class ReportOutgoing {
     private final ReportType type;
     private final String[] targets;
-    private final EnumSet<ReportReason> reasons;
+    private final String[] reasons;
 
-    public ReportOutgoing(ReportType type, String[] targets, EnumSet<ReportReason> reasons) {
+    public ReportOutgoing(ReportType type, String[] targets, String[] reasons) {
         this.type = type;
         this.targets = targets;
         this.reasons = reasons;
@@ -19,16 +17,11 @@ public class ReportOutgoing {
         BLOCK, PLAYER;
     }
 
-    private long getReasonBits() {
-        long result = 0;
-        for(ReportReason reason : reasons) result |= 1L << reason.getIndex();
-        return result;
-    }
-
     public void writeTo(PacketBuffer buffer) {
         buffer.writeByte((byte) type.ordinal());
         buffer.writeInt(targets.length);
         for(String player : targets) buffer.writeString(player);
-        buffer.writeLong(getReasonBits());
+        buffer.writeInt(reasons.length);
+        for(String reason : reasons) buffer.writeString(reason);
     }
 }
