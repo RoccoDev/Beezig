@@ -65,12 +65,12 @@ public enum Settings {
 
     // Misc
     CHAT_LINKS(true),
-    AUTOGG(true),
+    AUTOGG(false),
     AUTOGG_MESSAGE("gg"),
-    AUTOGG_DELAY(1000L),
-    AUTOGL(true),
+    AUTOGG_DELAY(0L),
+    AUTOGL(false),
     AUTOGL_MESSAGE("gl & hf"),
-    AUTOGL_DELAY(1000L);
+    AUTOGL_DELAY(0L);
 
     private final Object defaultValue;
     private final Class settingType;
