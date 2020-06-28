@@ -17,30 +17,30 @@
  * along with Beezig.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package eu.beezig.core.autogg;
+package eu.beezig.core.automessage;
 
 import eu.beezig.core.config.Setting;
 import eu.beezig.core.config.Settings;
 import eu.beezig.core.data.DataPath;
 
-public class AutoGLManager extends AutoMessageManager {
+public class AutoGGManager extends AutoMessageManager{
     @Override
     public Setting getEnabledSetting() {
-        return Settings.AUTOGL.get();
+        return Settings.AUTOGG.get();
     }
 
     @Override
     public Setting getMessageSetting() {
-        return Settings.AUTOGL_MESSAGE.get();
+        return Settings.AUTOGG_MESSAGE.get();
     }
 
     @Override
     public Setting getDelaySetting() {
-        return Settings.AUTOGL_DELAY.get();
+        return Settings.AUTOGG_DELAY.get();
     }
 
     @Override
     public DataPath getTriggersPath() {
-        return DataPath.AUTOGL_TRIGGERS;
+        return DataPath.AUTOGG_TRIGGERS;
     }
 }

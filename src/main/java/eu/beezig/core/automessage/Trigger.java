@@ -17,30 +17,33 @@
  * along with Beezig.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package eu.beezig.core.autogg;
+package eu.beezig.core.automessage;
 
-import eu.beezig.core.config.Setting;
-import eu.beezig.core.config.Settings;
-import eu.beezig.core.data.DataPath;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-public class AutoGGManager extends AutoMessageManager{
-    @Override
-    public Setting getEnabledSetting() {
-        return Settings.AUTOGG.get();
+import java.util.regex.Pattern;
+
+public class Trigger {
+
+    public enum Type {
+        @SerializedName("CHAT")
+        CHAT,
+        @SerializedName("TITLE")
+        TITLE,
+        @SerializedName("SUBTITLE")
+        SUBTITLE
     }
 
-    @Override
-    public Setting getMessageSetting() {
-        return Settings.AUTOGG_MESSAGE.get();
+    @SerializedName("type")
+    @Expose
+    private Type type;
+    @SerializedName("trigger")
+    @Expose
+    private String trigger;
+
+    public boolean doesTrigger(String message, Type type){
+        return Pattern.matches(trigger, message) && this.type == type;
     }
 
-    @Override
-    public Setting getDelaySetting() {
-        return Settings.AUTOGG_DELAY.get();
-    }
-
-    @Override
-    public DataPath getTriggersPath() {
-        return DataPath.AUTOGG_TRIGGERS;
-    }
 }

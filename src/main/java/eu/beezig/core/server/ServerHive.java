@@ -20,7 +20,7 @@
 package eu.beezig.core.server;
 
 import eu.beezig.core.Beezig;
-import eu.beezig.core.autogg.AutoMessageManager;
+import eu.beezig.core.automessage.AutoMessageManager;
 import eu.beezig.core.server.listeners.BEDListener;
 import eu.beezig.core.server.listeners.SKYListener;
 import eu.beezig.core.server.listeners.TIMVListener;

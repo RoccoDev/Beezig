@@ -17,7 +17,7 @@
  * along with Beezig.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package eu.beezig.core.autogg;
+package eu.beezig.core.automessage;
 
 import eu.beezig.core.Beezig;
 import eu.beezig.core.config.Setting;

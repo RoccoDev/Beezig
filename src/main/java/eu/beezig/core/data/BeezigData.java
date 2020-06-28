@@ -20,8 +20,8 @@
 package eu.beezig.core.data;
 
 import eu.beezig.core.Beezig;
-import eu.beezig.core.autogg.AutoGGManager;
-import eu.beezig.core.autogg.AutoGLManager;
+import eu.beezig.core.automessage.AutoGGManager;
+import eu.beezig.core.automessage.AutoGLManager;
 import eu.beezig.core.data.timv.TestMessagesManager;
 import eu.beezig.core.util.FileUtils;
 import eu.beezig.core.util.text.Message;
