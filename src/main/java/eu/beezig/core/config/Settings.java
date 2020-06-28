@@ -64,7 +64,13 @@ public enum Settings {
     TIMV_ADVREC_KPV(true),
 
     // Misc
-    CHAT_LINKS(true);
+    CHAT_LINKS(true),
+    AUTOGG(true),
+    AUTOGG_MESSAGE("gg"),
+    AUTOGG_DELAY(1000L),
+    AUTOGL(true),
+    AUTOGL_MESSAGE("gl & hf"),
+    AUTOGL_DELAY(1000L);
 
     private final Object defaultValue;
     private final Class settingType;

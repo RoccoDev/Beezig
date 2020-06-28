@@ -17,21 +17,30 @@
  * along with Beezig.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package eu.beezig.core.data;
+package eu.beezig.core.autogg;
 
-public enum DataPath {
-    TIMV_MAPS("timv/maps.json"),
-    DR_MAPS("dr/maps.json"),
-    AUTOGG_TRIGGERS("autogg-triggers.json"),
-    AUTOGL_TRIGGERS("autogl-triggers.json");
+import eu.beezig.core.config.Setting;
+import eu.beezig.core.config.Settings;
+import eu.beezig.core.data.DataPath;
 
-    private final String path;
-
-    DataPath(String path) {
-        this.path = path;
+public class AutoGLManager extends AutoMessageManager {
+    @Override
+    public Setting getEnabledSetting() {
+        return Settings.AUTOGL.get();
     }
 
-    String getPath() {
-        return path;
+    @Override
+    public Setting getMessageSetting() {
+        return Settings.AUTOGL_MESSAGE.get();
+    }
+
+    @Override
+    public Setting getDelaySetting() {
+        return Settings.AUTOGL_DELAY.get();
+    }
+
+    @Override
+    public DataPath getTriggersPath() {
+        return DataPath.AUTOGL_TRIGGERS;
     }
 }

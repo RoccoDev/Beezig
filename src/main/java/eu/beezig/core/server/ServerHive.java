@@ -20,6 +20,7 @@
 package eu.beezig.core.server;
 
 import eu.beezig.core.Beezig;
+import eu.beezig.core.autogg.AutoMessageManager;
 import eu.beezig.core.server.listeners.BEDListener;
 import eu.beezig.core.server.listeners.SKYListener;
 import eu.beezig.core.server.listeners.TIMVListener;
@@ -102,6 +103,7 @@ public class ServerHive extends ServerInstance {
         if(Beezig.get().getTemporaryPointsManager() != null)
             Beezig.get().getTemporaryPointsManager().startSession();
         Beezig.get().getData().getAutoGGManager().initTriggers();
+        Beezig.get().getData().getAutoGLManager().initTriggers();
     }
 
     @Override
@@ -148,7 +150,11 @@ public class ServerHive extends ServerInstance {
             else if("map".equals(key) && gameMode instanceof HiveMode) ((HiveMode)gameMode).setMap(match.get(0));
             else if("autovote.map".equals(key) && gameMode instanceof HiveMode) ((HiveMode)gameMode).getAutovoteManager().parse(match);
             else if("partychat.enable".equals(key)) inPartyChat = true;
-            else if("partychat.disable".equals(key)) inPartyChat = false;
+            else if("partychat.disable".equals(key)) {
+                inPartyChat = false;
+                // Send queued AutoGG and AutoGL messages
+                AutoMessageManager.sendQueuedMessages();
+            }
             else if("party.join".equals(key) || "party.create".equals(key)) inParty = true;
             else if("party.leave".equals(key) || "party.disband".equals(key)) {
                 inParty = false;
