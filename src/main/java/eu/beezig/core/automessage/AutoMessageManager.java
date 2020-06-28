@@ -69,7 +69,7 @@ public abstract class AutoMessageManager {
         if (trigger != null) {
             for (Trigger.Type t : types) {
                 if (trigger.doesTrigger(ChatColor.stripColor(message), t)) {
-                    new Thread(() -> {
+                    Beezig.get().getAsyncExecutor().execute(() -> {
                         try {
                             if (((ServerHive) Beezig.api().getActiveServer()).getInPartyChat()) {
                                 Thread.sleep(delay.getLong());
@@ -82,7 +82,7 @@ public abstract class AutoMessageManager {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                    }).start();
+                    });
                 }
             }
         }
