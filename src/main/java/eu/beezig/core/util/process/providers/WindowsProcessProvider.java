@@ -12,7 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class WindowsProcessProvider implements IProcessProvider {
-    private static final Pattern PROCESS_NAME_REGEX = Pattern.compile("\"(.+?)\"");
+    private static final Pattern PROCESS_NAME_REGEX = Pattern.compile("\"(.+?)\\.exe\"");
 
     @Override
     public List<String> getRunningProcesses() throws IOException {
