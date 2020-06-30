@@ -70,7 +70,8 @@ public enum Settings {
     AUTOGG_DELAY(0L),
     AUTOGL(false),
     AUTOGL_MESSAGE("gl & hf"),
-    AUTOGL_DELAY(0L);
+    AUTOGL_DELAY(0L),
+    RECORD_DND(false);
 
     private final Object defaultValue;
     private final Class settingType;

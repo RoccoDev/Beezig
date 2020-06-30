@@ -32,6 +32,7 @@ import eu.beezig.core.net.session.The5zigProvider;
 import eu.beezig.core.notification.NotificationManager;
 import eu.beezig.core.server.ServerHive;
 import eu.beezig.core.util.DirectoryMigration;
+import eu.beezig.core.util.process.ProcessManager;
 import eu.beezig.core.util.snipe.AntiSniper;
 import eu.beezig.core.util.task.WorldTaskManager;
 import eu.beezig.core.util.text.LinkSnipper;
@@ -51,6 +52,7 @@ import org.apache.logging.log4j.core.config.LoggerConfig;
 import java.io.File;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 @Plugin(name = "Beezig", version = Constants.VERSION)
 public class Beezig {
@@ -60,7 +62,7 @@ public class Beezig {
     private static Beezig instance;
 
     private ModAPI api;
-    private ExecutorService asyncExecutor;
+    private ScheduledExecutorService asyncExecutor;
     private BeezigConfiguration config;
     private File beezigDir;
     private BeezigData data;
@@ -69,6 +71,7 @@ public class Beezig {
     private TemporaryPointsManager temporaryPointsManager;
     private NotificationManager notificationManager;
     private AntiSniper antiSniper;
+    private ProcessManager processManager;
     private boolean laby;
 
     public Beezig(boolean laby, File labyDir) {
@@ -95,7 +98,7 @@ public class Beezig {
         // Init fields
         instance = this;
         api = The5zigAPI.getAPI();
-        asyncExecutor = Executors.newFixedThreadPool(5);
+        asyncExecutor = Executors.newScheduledThreadPool(10);
         worldTaskManager = new WorldTaskManager();
         api.getPluginManager().registerListener(this, worldTaskManager);
         HiveWrapper.setAsyncExecutor(asyncExecutor);
@@ -145,6 +148,7 @@ public class Beezig {
         Modules.register(this, api);
         CommandManager.init(this);
         notificationManager = new NotificationManager();
+        processManager = new ProcessManager();
 
         networkManager = new BeezigNetManager();
         networkManager.connect();
@@ -164,7 +168,7 @@ public class Beezig {
         logger.debug("Debug is active.");
     }
 
-    public ExecutorService getAsyncExecutor() {
+    public ScheduledExecutorService getAsyncExecutor() {
         return asyncExecutor;
     }
 
@@ -202,6 +206,10 @@ public class Beezig {
 
     public AntiSniper getAntiSniper() {
         return antiSniper;
+    }
+
+    public ProcessManager getProcessManager() {
+        return processManager;
     }
 
     public static Beezig get() {
