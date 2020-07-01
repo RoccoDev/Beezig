@@ -14,6 +14,7 @@ import eu.the5zig.mod.util.component.MessageComponent;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -22,7 +23,7 @@ public class ProcessManager {
     private Set<IProcess> processes = new HashSet<>();
 
     public ProcessManager() {
-        String os = System.getProperty("os.name");
+        String os = System.getProperty("os.name").toLowerCase(Locale.ROOT);
         if(os.contains("mac") || os.contains("nix") || os.contains("nux") || os.contains("aix"))
             this.provider = new UnixProcessProvider();
         else if(os.contains("win")) this.provider = new WindowsProcessProvider();
