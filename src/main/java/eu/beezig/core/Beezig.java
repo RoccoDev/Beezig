@@ -21,6 +21,7 @@ package eu.beezig.core;
 
 import com.google.gson.Gson;
 import com.mojang.authlib.GameProfile;
+import eu.beezig.core.api.BeezigServiceLoader;
 import eu.beezig.core.command.CommandManager;
 import eu.beezig.core.config.BeezigConfiguration;
 import eu.beezig.core.data.BeezigData;
@@ -50,7 +51,6 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 
 import java.io.File;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -72,6 +72,7 @@ public class Beezig {
     private NotificationManager notificationManager;
     private AntiSniper antiSniper;
     private ProcessManager processManager;
+    private BeezigServiceLoader serviceLoader;
     private boolean laby;
 
     public Beezig(boolean laby, File labyDir) {
@@ -153,6 +154,9 @@ public class Beezig {
         networkManager = new BeezigNetManager();
         networkManager.connect();
 
+        serviceLoader = new BeezigServiceLoader();
+        serviceLoader.attemptLoad();
+
         logger.info(String.format("Load complete in %d ms.", System.currentTimeMillis() - timeStart));
     }
 
@@ -210,6 +214,10 @@ public class Beezig {
 
     public ProcessManager getProcessManager() {
         return processManager;
+    }
+
+    public BeezigServiceLoader getServiceLoader() {
+        return serviceLoader;
     }
 
     public static Beezig get() {

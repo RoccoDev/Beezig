@@ -20,6 +20,7 @@
 package eu.beezig.core.server;
 
 import eu.beezig.core.Beezig;
+import eu.beezig.core.api.BeezigForge;
 import eu.beezig.core.automessage.AutoMessageManager;
 import eu.beezig.core.server.listeners.BEDListener;
 import eu.beezig.core.server.listeners.SKYListener;
@@ -104,6 +105,7 @@ public class ServerHive extends ServerInstance {
             Beezig.get().getTemporaryPointsManager().startSession();
         Beezig.get().getData().getAutoGGManager().initTriggers();
         Beezig.get().getData().getAutoGLManager().initTriggers();
+        if(BeezigForge.isSupported()) BeezigForge.get().setOnHive(true);
     }
 
     @Override
@@ -138,7 +140,9 @@ public class ServerHive extends ServerInstance {
 
             if(gameMode == null && key.startsWith("join.")) {
                 WorldTask.submit(() -> Beezig.api().sendPlayerMessage("/whereami"));
-                getGameListener().switchLobby(key.replace("join.", ""));
+                String id = key.replace("join.", "");
+                getGameListener().switchLobby(id);
+                if(BeezigForge.isSupported()) BeezigForge.get().setCurrentGame(id);
             }
             Beezig.get().getNotificationManager().onMatch(key, match);
             Beezig.get().getAntiSniper().onMatch(key, match);
@@ -175,6 +179,7 @@ public class ServerHive extends ServerInstance {
                 if(gameMode.getState() != GameState.LOBBY) ((HiveMode)gameMode).end();
             }
             getGameListener().switchLobby(null);
+            if(BeezigForge.isSupported()) BeezigForge.get().setCurrentGame(null);
         }
 
         @Override
@@ -189,6 +194,7 @@ public class ServerHive extends ServerInstance {
             }
             if(Beezig.get().getTemporaryPointsManager() != null)
                 Beezig.get().getTemporaryPointsManager().endSession();
+            if(BeezigForge.isSupported()) BeezigForge.get().setOnHive(false);
         }
 
         @Override
