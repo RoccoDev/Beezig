@@ -2,3 +2,12 @@ language: java
 jdk:
   - openjdk8
 install: ./gradlew build
+deploy:
+  - provider: pages
+    skip_cleanup: true
+    local_dir: build/libs/
+    github_token: $GITHUB_TOKEN
+    repo: RoccoDev/Beezig-Deploy
+    target_branch: $TRAVIS_BRANCH
+    on:
+      all_branches: true
