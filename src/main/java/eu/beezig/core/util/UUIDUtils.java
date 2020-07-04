@@ -49,6 +49,7 @@ public class UUIDUtils {
     public static String getShortRole(UUID id) {
         if(id == null) return "";
         Optional<UserProfile> profile = Beezig.net().getProfilesCache().getIfPresent(id);
+        if(profile == null) return "";
         return profile.map(userProfile -> userProfile.getRole().getShortName()).orElse("");
     }
 

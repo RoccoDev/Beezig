@@ -21,8 +21,10 @@ package eu.beezig.core.api;
 
 import eu.beezig.core.Beezig;
 import eu.beezig.core.net.BeezigNetManager;
+import eu.beezig.core.net.profile.UserProfile;
 
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.ServiceLoader;
 
 public class BeezigServiceLoader {
@@ -45,8 +47,9 @@ public class BeezigServiceLoader {
         mainService.registerUserIndicator(uuid -> {
             BeezigNetManager mgr = Beezig.get().getNetworkManager();
             if(mgr == null || mgr.getProfilesCache() == null) return 0;
-            return Beezig.get().getNetworkManager().getProfilesCache().getIfPresent(uuid)
-                    .map(user -> user.getRole().ordinal() + 1).orElse(0);
+            Optional<UserProfile> profile = Beezig.get().getNetworkManager().getProfilesCache().getIfPresent(uuid);
+            if(profile == null) return 0;
+            return profile.map(user -> user.getRole().ordinal() + 1).orElse(0);
         });
     }
 }
