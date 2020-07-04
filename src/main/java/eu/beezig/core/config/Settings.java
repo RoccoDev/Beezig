@@ -57,7 +57,6 @@ public enum Settings {
     SNIPE_PMS(true),
 
     // Trouble in Mineville
-    TIMV_ADVREC_VICTORIES(true),
     TIMV_ADVREC_KRR(true),
     TIMV_ADVREC_TRATIO(true),
     TIMV_ADVREC_RECORD(true),

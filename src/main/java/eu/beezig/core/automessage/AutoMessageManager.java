@@ -122,7 +122,6 @@ public abstract class AutoMessageManager {
         // We're calling handleEvent for TITLE and SUBTITLE as this event triggers
         // for both types.
         handleEvent(event.getTitle(), Trigger.Type.TITLE, Trigger.Type.SUBTITLE);
-        System.out.println(event.getTitle());
     }
 
     static class TriggerModeConnection {
