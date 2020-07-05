@@ -37,7 +37,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class BED extends HiveMode implements IAutovote {
-    private static final Pattern MODE_REGEX = Pattern.compile("Your BED([DTX]?) Stats");
 
     private int bedsDestroyed;
     private String mode;
@@ -52,7 +51,6 @@ public class BED extends HiveMode implements IAutovote {
     }
 
     public BED() {
-        statsFetcher.setScoreboardTitle(MODE_REGEX);
         statsFetcher.setApiComputer(name -> {
             BedStats api = Profiles.bed(name).join();
             GlobalStats stats = new GlobalStats();
@@ -137,26 +135,6 @@ public class BED extends HiveMode implements IAutovote {
     }
 
     private void updateMode() {
-        Scoreboard sb = The5zigAPI.getAPI().getSideScoreboard();
-        if(sb == null) return;
-        String title = ChatColor.stripColor(sb.getTitle().trim());
-        Matcher match = MODE_REGEX.matcher(title);
-        if(match.matches()) {
-            String id = match.group(1);
-            switch(id) {
-                case "D":
-                    mode = "Duos";
-                    break;
-                case "T":
-                    mode = "Teams";
-                    break;
-                case "X":
-                    mode = "LTM";
-                    break;
-                default:
-                    mode = "Solo";
-                    break;
-            }
-        }
+        // TODO: Java 2 Fix
     }
 }

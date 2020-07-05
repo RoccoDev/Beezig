@@ -28,24 +28,17 @@ import eu.beezig.core.util.UUIDUtils;
 import eu.beezig.core.util.text.Message;
 import eu.beezig.hiveapi.wrapper.player.Profiles;
 import eu.beezig.hiveapi.wrapper.player.games.SkyStats;
-import eu.the5zig.mod.The5zigAPI;
-import eu.the5zig.mod.gui.ingame.Scoreboard;
-import eu.the5zig.util.minecraft.ChatColor;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Map;
 
 public class SKY extends HiveMode implements IAutovote {
-
-    private static final Pattern MODE_REGEX = Pattern.compile("Your SKY([DT]?) Stats");
 
     private String mode;
     private boolean won;
 
     public SKY ()
     {
-        statsFetcher.setScoreboardTitle(MODE_REGEX);
         statsFetcher.setApiComputer(name -> {
             SkyStats api = Profiles.sky(name).join();
             GlobalStats stats = new GlobalStats();
@@ -135,21 +128,6 @@ public class SKY extends HiveMode implements IAutovote {
     }
 
     private void updateMode() {
-        Scoreboard sb = The5zigAPI.getAPI().getSideScoreboard();
-        if (sb == null) return;
-        Matcher match = MODE_REGEX.matcher(ChatColor.stripColor(sb.getTitle().trim()));
-        if (match.matches()) {
-            String id = match.group(1);
-            switch(id) {
-                case "D":
-                    mode = "Duos";
-                    break;
-                case "T":
-                    mode = "Teams";
-                    break;
-                default:
-                    mode = "Solo";
-            }
-        }
+        // TODO: Java 2 Fix
     }
 }

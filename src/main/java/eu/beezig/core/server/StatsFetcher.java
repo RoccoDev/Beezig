@@ -38,9 +38,8 @@ import java.util.stream.Collectors;
  * this interface, or set up the producers accordingly.
  */
 public class StatsFetcher {
-    private Class<? extends HiveMode> gamemode;
-    private CompletableFuture<HiveMode.GlobalStats> job;
-    private Pattern scoreboardTitle;
+    private final Class<? extends HiveMode> gamemode;
+    private final CompletableFuture<HiveMode.GlobalStats> job;
     private Function<String, HiveMode.GlobalStats> apiComputer;
     private Function<HashMap<String, Integer>, HiveMode.GlobalStats> scoreboardComputer;
     private long firstCheck = -1, timeout = 2000L;
@@ -58,14 +57,6 @@ public class StatsFetcher {
         this.scoreboardComputer = scoreboardComputer;
     }
 
-    public void setScoreboardTitle(String scoreboardTitle) {
-        this.scoreboardTitle = Pattern.compile(scoreboardTitle);
-    }
-
-    public void setScoreboardTitle(Pattern scoreboardTitle) {
-        this.scoreboardTitle = scoreboardTitle;
-    }
-
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }
@@ -77,11 +68,14 @@ public class StatsFetcher {
     void attemptCompute(HiveMode mode, Scoreboard board) {
         if(job.isDone()) return;
         if(!gamemode.isAssignableFrom(mode.getClass())) return;
-        if(board != null && scoreboardTitle.matcher(ChatColor.stripColor(board.getTitle()).trim()).matches()) {
+        if(board != null && Pattern.matches("HiveMC", ChatColor.stripColor(board.getTitle()).trim())) {
             Beezig.logger.debug("Found matching scoreboard using title backend");
             HashMap<String, Integer> normalized = board.getLines().entrySet().stream()
-                    .map(e -> new HashMap.SimpleEntry<>(ChatColor.stripColor(e.getKey()), e.getValue()))
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y, HashMap::new));
+                    .map(e -> {
+                        String[] lineSegments = ChatColor.stripColor(e.getKey()).split(": ");
+                        return new HashMap.SimpleEntry<>(lineSegments[0].trim(),
+                                lineSegments.length > 1 ? Integer.parseInt(lineSegments[1].replaceAll(",", "").trim()) : e.getValue());
+                    }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y, HashMap::new));
             job.complete(scoreboardComputer.apply(normalized));
         }
         else {

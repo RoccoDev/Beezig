@@ -119,7 +119,6 @@ public class TIMV extends HiveMode implements IAutovote {
     }
 
     public TIMV() {
-        statsFetcher.setScoreboardTitle("Your TIMV Stats");
         statsFetcher.setApiComputer(name -> {
             TimvStats api = Profiles.timv(name).join();
             GlobalStats stats = new GlobalStats();
