@@ -23,6 +23,7 @@ import eu.beezig.core.Beezig;
 import eu.beezig.core.api.BeezigForge;
 import eu.beezig.core.automessage.AutoMessageManager;
 import eu.beezig.core.server.listeners.BEDListener;
+import eu.beezig.core.server.listeners.HIDEListener;
 import eu.beezig.core.server.listeners.SKYListener;
 import eu.beezig.core.server.listeners.TIMVListener;
 import eu.beezig.core.util.UUIDUtils;
@@ -78,6 +79,7 @@ public class ServerHive extends ServerInstance {
         registry.registerListener(new TIMVListener());
         registry.registerListener(new BEDListener());
         registry.registerListener(new SKYListener());
+        registry.registerListener(new HIDEListener());
     }
 
     @Override

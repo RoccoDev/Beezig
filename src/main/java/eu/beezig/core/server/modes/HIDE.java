@@ -27,18 +27,18 @@ import eu.beezig.core.server.IAutovote;
 import eu.beezig.core.util.UUIDUtils;
 import eu.beezig.core.util.text.Message;
 import eu.beezig.hiveapi.wrapper.player.Profiles;
-import eu.beezig.hiveapi.wrapper.player.games.SkyStats;
+import eu.beezig.hiveapi.wrapper.player.games.HideStats;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
-public class SKY extends HiveMode implements IAutovote {
+public class HIDE extends HiveMode implements IAutovote {
 
-    private String mode;
     private boolean won;
+    private int lastSbPoints;
 
-    public SKY ()
+    public HIDE ()
     {
         statsFetcher.setApiComputer(name -> {
-            SkyStats api = Profiles.sky(name).join();
+            HideStats api = Profiles.hide(name).join();
             GlobalStats stats = new GlobalStats();
             stats.setPoints((int) api.getPoints());
             stats.setKills((int) api.getKills());
@@ -51,58 +51,33 @@ public class SKY extends HiveMode implements IAutovote {
         statsFetcher.setScoreboardComputer(lines -> {
             GlobalStats stats = new GlobalStats();
             stats.setPoints(lines.get("Points"));
-            stats.setKills(lines.get("Kills"));
+            stats.setKills(lines.get("Total Kills"));
             stats.setPlayed(lines.get("Games Played"));
-            stats.setDeaths(lines.get("Deaths"));
+            stats.setDeaths(lines.get("Total Deaths"));
             stats.setVictories(lines.get("Victories"));
-            Profiles.sky(UUIDUtils.strip(Beezig.user().getId()))
+            Profiles.hide(UUIDUtils.strip(Beezig.user().getId()))
                     .thenAccept(api -> stats.setTitle(getTitleService().getTitle(api.getTitle())));
             return stats;
         });
         getAdvancedRecords().setExecutor(this::recordsExecutor);
-        logger.setHeaders("Points", "Map", "Kills", "Mode", "Victory?", "Timestamp", "GameID");
+        logger.setHeaders("Points", "Map", "Kills", "Victory?", "Timestamp", "GameID");
     }
 
     private void recordsExecutor() {
-        AdvRecUtils.addPvPStats(getAdvancedRecords());
+        AdvRecUtils.addPvPStats(getAdvancedRecords(), "Total Kills", "Total Deaths");
         int points = Message.getNumberFromFormat(getAdvancedRecords().getMessage("Points")).intValue();
         if (AdvRecUtils.needsAPI()) {
             AdvRecUtils.announceAPI();
-            SkyStats api = Profiles.sky(getAdvancedRecords().getTarget()).join();
+            HideStats api = Profiles.hide(getAdvancedRecords().getTarget()).join();
             getAdvancedRecords().getMessages().set(0, new ImmutablePair<>("Points",
                     getAdvancedRecords().getMessages().get(0).getRight() +
                             AdvRecUtils.getTitle(getTitleService(), api.getTitle(), points)));
         }
     }
 
-    public void setWon() {
-        addPoints(20);
-        won = true;
-    }
-
-    @Override
-    public void end() {
-        super.end();
-        logger.log(getPoints(), getMap(), getKills(), mode, won, System.currentTimeMillis(), getGameID());
-        if(getSessionService() != null)
-            Beezig.get().getTemporaryPointsManager().getCurrentSession().pushItem(new SessionItem.Builder(getIdentifier())
-                    .points(getPoints()).map(getMap()).victory(won).gameStart(gameStart).kills(getKills()).deaths(getDeaths()).build());
-    }
-
-    @Override
-    public void addKills(int kills) {
-        super.addKills(kills);
-        addPoints(5);
-    }
-
     @Override
     public String getIdentifier() {
-        return "sky";
-    }
-
-    @Override
-    public String getName() {
-        return "SkyWars";
+        return "hide";
     }
 
     @Override
@@ -115,17 +90,28 @@ public class SKY extends HiveMode implements IAutovote {
         return true;
     }
 
-    public String getMode() {
-        return mode;
+    @Override
+    public String getName() {
+        return "Hide and Seek";
+    }
+
+    public void setWon() {
+        won = true;
     }
 
     @Override
-    public void setMap(String map) {
-        super.setMap(map);
-        updateMode();
+    public void end() {
+        super.end();
+        logger.log(getPoints(), getMap(), getKills(), won, System.currentTimeMillis(), getGameID());
+        if(getSessionService() != null)
+            Beezig.get().getTemporaryPointsManager().getCurrentSession().pushItem(new SessionItem.Builder(getIdentifier())
+                    .points(getPoints()).map(getMap()).victory(won).gameStart(gameStart).kills(getKills()).deaths(getDeaths()).build());
     }
 
-    private void updateMode() {
-        // TODO: Java 2 Fix
+    public void tryUpdatePoints(String newAmount) {
+        int num = Integer.parseInt(newAmount, 10);
+        if(lastSbPoints == num) return;
+        addPoints(num - lastSbPoints);
+        lastSbPoints = num;
     }
 }

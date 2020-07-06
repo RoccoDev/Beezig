@@ -29,9 +29,13 @@ import org.apache.commons.lang3.tuple.Pair;
 
 public class AdvRecUtils {
     public static void addPvPStats(AdvancedRecords mgr) {
+        addPvPStats(mgr, "Kills", "Deaths");
+    }
+
+    public static void addPvPStats(AdvancedRecords mgr, String killsKey, String deathsKey) {
         if(s(Settings.ADVREC_KD)) {
-            int kills = Message.getNumberFromFormat(mgr.getMessage("Kills")).intValue();
-            int deaths = Message.getNumberFromFormat(mgr.getMessage("Deaths")).intValue();
+            int kills = Message.getNumberFromFormat(mgr.getMessage(killsKey)).intValue();
+            int deaths = Message.getNumberFromFormat(mgr.getMessage(deathsKey)).intValue();
             double kd = deaths == 0 ? Double.POSITIVE_INFINITY : kills / (double) deaths;
             mgr.getMessages().add(new ImmutablePair<>("K/D", Message.ratio(kd)));
         }
@@ -42,7 +46,7 @@ public class AdvRecUtils {
             mgr.getMessages().add(new ImmutablePair<>("Win Rate", Message.ratio(wr) + "%"));
         }
         if(s(Settings.ADVREC_KPG)) {
-            int kills = Message.getNumberFromFormat(mgr.getMessage("Kills")).intValue();
+            int kills = Message.getNumberFromFormat(mgr.getMessage(killsKey)).intValue();
             int played = Message.getNumberFromFormat(mgr.getMessage("Games Played")).intValue();
             double kpg = played == 0 ? Double.POSITIVE_INFINITY : kills / (double) played;
             mgr.getMessages().add(new ImmutablePair<>("Kills Per Game",
