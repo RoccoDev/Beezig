@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 
 public class ProfileBadgeListener {
 
-    private static final Pattern LIST_REGEX = Pattern.compile("§8▍ .+ ▏ §6Online (?:spectators|participants): .+");
+    private static final Pattern LIST_REGEX = Pattern.compile("§8▍ .+ ▏ §3Online (?:spectators|participants) \\(.+\\): .+");
 
     @EventHandler
     public void onChat(ChatEvent event) {
@@ -44,14 +44,14 @@ public class ProfileBadgeListener {
             MessageComponent main = new MessageComponent("§a" + parts[0] + ":");
             String[] players = parts[1].split(", ");
             for(int i = 0; i < players.length; i++) {
-                String player = players[i].replace(".", "");
+                String player = players[i].replace(".", "").trim();
                 MessageComponent cmp = new MessageComponent(player);
                 UUID id = UUIDUtils.getLocalUUID(ChatColor.stripColor(player));
                 if(id != null) cmp.getSiblings().add(UUIDUtils.getUserRole(id));
                 main.getSiblings().add(cmp);
-                if(i != players.length - 1) main.getSiblings().add(new MessageComponent(", "));
+                if(i != players.length - 1) main.getSiblings().add(new MessageComponent("§3, "));
             }
-            main.getSiblings().add(new MessageComponent("§f."));
+            main.getSiblings().add(new MessageComponent("§3."));
             event.setCancelled(true);
             Beezig.api().messagePlayerComponent(main, false);
         }
