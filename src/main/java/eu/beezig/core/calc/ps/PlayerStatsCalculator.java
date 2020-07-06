@@ -68,6 +68,7 @@ public class PlayerStatsCalculator {
                     .map(CompletableFuture::join)
                     .filter(Objects::nonNull)
                     .map(s -> mode.getProfile(displayNames, s, apiStat, stat))
+                        .filter(Objects::nonNull)
                     .sorted()
                     .mapToDouble(p -> {
                         Message.info(p.getFormat() + " " + UUIDUtils.getShortRole(UUIDUtils.getLocalUUID(ChatColor.stripColor(p.getDisplayName()))));

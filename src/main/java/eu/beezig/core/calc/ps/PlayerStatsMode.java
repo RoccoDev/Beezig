@@ -77,7 +77,10 @@ public class PlayerStatsMode {
         else if("wl".equalsIgnoreCase(stat)) {
             value = src.getLong(getApiKey("victories")) * 100D / (double) src.getLong(getApiKey("played"));
         }
-        if(value == null) value = source.getSource().getInt(key);
+        if(value == null) {
+            if(source.getSource().getInput().get(key) == null) return null;
+            value = source.getSource().getInt(key);
+        }
         PlayerStatsProfile profile = new PlayerStatsProfile(displayNames.get(source.getUUID()), value);
         if(source instanceof Titleable && titleService != null && titleService.isValid())
             profile.setTitle(titleService.getTitle(((Titleable)source).getTitle()).getRight());
