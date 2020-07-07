@@ -20,6 +20,7 @@
 package eu.beezig.core.api;
 
 import eu.beezig.core.Beezig;
+import eu.beezig.core.command.CommandManager;
 import eu.beezig.core.data.HiveTitle;
 import eu.beezig.core.net.BeezigNetManager;
 import eu.beezig.core.net.profile.UserProfile;
@@ -29,6 +30,7 @@ import eu.beezig.core.server.TitleService;
 import eu.the5zig.mod.server.GameMode;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.ServiceLoader;
@@ -69,5 +71,6 @@ public class BeezigServiceLoader {
             }
             return null;
         });
+        mainService.addCommands(new ArrayList<>(CommandManager.commandExecutors));
     }
 }

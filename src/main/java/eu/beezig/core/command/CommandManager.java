@@ -28,7 +28,7 @@ import java.util.*;
 
 public class CommandManager {
 
-    private static Set<Command> commandExecutors = new HashSet<>();
+    public static Set<Command> commandExecutors = new HashSet<>();
 
     private static void registerCommands() {
         commandExecutors.add(new BeezigCommand());
