@@ -22,10 +22,7 @@ package eu.beezig.core.server;
 import eu.beezig.core.Beezig;
 import eu.beezig.core.api.BeezigForge;
 import eu.beezig.core.automessage.AutoMessageManager;
-import eu.beezig.core.server.listeners.BEDListener;
-import eu.beezig.core.server.listeners.HIDEListener;
-import eu.beezig.core.server.listeners.SKYListener;
-import eu.beezig.core.server.listeners.TIMVListener;
+import eu.beezig.core.server.listeners.*;
 import eu.beezig.core.util.UUIDUtils;
 import eu.beezig.core.util.task.WorldTask;
 import eu.beezig.core.util.text.Message;
@@ -72,6 +69,10 @@ public class ServerHive extends ServerInstance {
         return inPartyChat;
     }
 
+    public void addTokens(int tokens) {
+        this.tokens += tokens;
+    }
+
     @Override
     public void registerListeners() {
         GameListenerRegistry registry = getGameListener();
@@ -80,6 +81,7 @@ public class ServerHive extends ServerInstance {
         registry.registerListener(new BEDListener());
         registry.registerListener(new SKYListener());
         registry.registerListener(new HIDEListener());
+        registry.registerListener(new DRListener());
     }
 
     @Override

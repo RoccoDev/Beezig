@@ -21,7 +21,7 @@ package eu.beezig.core.server.listeners;
 
 import eu.beezig.core.Beezig;
 import eu.beezig.core.server.ServerHive;
-import eu.beezig.core.server.modes.HIDE;
+import eu.beezig.core.server.modes.DR;
 import eu.the5zig.mod.gui.ingame.Scoreboard;
 import eu.the5zig.mod.server.AbstractGameListener;
 import eu.the5zig.mod.server.IPatternResult;
@@ -31,42 +31,46 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class HIDEListener extends AbstractGameListener<HIDE> {
-
-    private static Pattern POINTS_REGEX = Pattern.compile("(\\d+) Points");
+public class DRListener extends AbstractGameListener<DR> {
+    private static Pattern POINTS_REGEX = Pattern.compile("Points: (\\d+)");
+    private static Pattern KILLS_REGEX = Pattern.compile("Kills: (\\d+)");
 
     @Override
-    public Class<HIDE> getGameMode() {
-        return HIDE.class;
+    public Class<DR> getGameMode() {
+        return DR.class;
     }
 
     @Override
     public boolean matchLobby(String s) {
-        return "hide".equals(s);
+        return "dr".equals(s);
     }
 
     @Override
-    public void onMatch(HIDE gameMode, String key, IPatternResult match) {
-        if("hide.kill".equals(key)) {
-            gameMode.addKills(1);
+    public void onMatch(DR gameMode, String key, IPatternResult match) {
+        if("dr.death".equals(key)) gameMode.addDeaths(1);
+        else if("dr.checkpoint".equals(key)) {
             ServerHive server = (ServerHive) Beezig.api().getActiveServer();
-            server.addTokens(Integer.parseInt(match.get(1), 10));
+            server.addTokens(Integer.parseInt(match.get(0), 10));
         }
-        else if("hide.win".equals(key)) {
-            gameMode.setWon();
-            gameMode.addPoints(Integer.parseInt(match.get(0), 10));
+        else if("dr.pbnew".equals(key) || "dr.pb".equals(key) || "dr.nopb".equals(key)) {
+            gameMode.setTime(match.get(0));
         }
     }
 
     @Override
-    public void onTick(HIDE gameMode) {
+    public void onTick(DR gameMode) {
         Scoreboard sb = Beezig.api().getSideScoreboard();
         if(sb == null) return;
         for(Map.Entry<String, Integer> entry : sb.getLines().entrySet()) {
-            if(entry.getValue() == 5 || entry.getValue() == 4) {
-                Matcher m = POINTS_REGEX.matcher(ChatColor.stripColor(entry.getKey()));
+            if(entry.getValue() <= 6 && entry.getValue() >= 4) {
+                String s = ChatColor.stripColor(entry.getKey());
+                Matcher m = POINTS_REGEX.matcher(s);
                 if(m.matches()) {
                     gameMode.tryUpdatePoints(m.group(1));
+                }
+                Matcher m2 = KILLS_REGEX.matcher(s);
+                if(m2.matches()) {
+                    gameMode.tryUpdateKills(m.group(1));
                 }
             }
         }
