@@ -37,7 +37,8 @@ import java.util.Optional;
 import java.util.ServiceLoader;
 
 public class BeezigServiceLoader {
-    private ServiceLoader<IBeezigService> services = ServiceLoader.load(IBeezigService.class, getClass().getClassLoader().getParent());
+    private ServiceLoader<IBeezigService> services = ServiceLoader.load(IBeezigService.class,
+            Beezig.get().isLaby() ? getClass().getClassLoader() : getClass().getClassLoader().getParent());
     private IBeezigService mainService;
 
     public IBeezigService getMainService() {
