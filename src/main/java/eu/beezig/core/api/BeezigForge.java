@@ -23,6 +23,7 @@ import eu.beezig.core.Beezig;
 
 public class BeezigForge {
     public static IBeezigService get() {
+        if (Beezig.get().getServiceLoader() == null) return null;
         return Beezig.get().getServiceLoader().getMainService();
     }
 

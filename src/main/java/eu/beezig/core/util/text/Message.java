@@ -21,6 +21,7 @@ package eu.beezig.core.util.text;
 
 import eu.beezig.core.Beezig;
 import eu.beezig.core.Constants;
+import eu.beezig.core.api.BeezigForge;
 import eu.beezig.core.config.Settings;
 import eu.beezig.core.util.Color;
 import eu.the5zig.mod.The5zigAPI;
@@ -46,7 +47,7 @@ public class Message {
         String framework = Beezig.get().isLaby() ? "LabyMod" : "5zig";
         return "Beezig/" + Constants.VERSION  + " (" + framework + "/" + The5zigAPI.getAPI().getModVersion() + " on "
                 + The5zigAPI.getAPI().getMinecraftVersion() + "; Forge=" + The5zigAPI.getAPI().isForgeEnvironment()
-                + "; BeezigForge=" + /*BeezigMain.hasExpansion*/ false + ")";
+                + "; BeezigForge=" + BeezigForge.isSupported() + ")";
     }
 
     public static String translate(String key) {

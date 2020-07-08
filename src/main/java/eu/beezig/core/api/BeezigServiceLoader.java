@@ -27,6 +27,7 @@ import eu.beezig.core.net.profile.UserProfile;
 import eu.beezig.core.server.HiveMode;
 import eu.beezig.core.server.ServerHive;
 import eu.beezig.core.server.TitleService;
+import eu.beezig.core.util.text.Message;
 import eu.the5zig.mod.server.GameMode;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -72,5 +73,6 @@ public class BeezigServiceLoader {
             return null;
         });
         mainService.addCommands(new ArrayList<>(CommandManager.commandExecutors));
+        mainService.registerFormatNumber(Message::formatNumber);
     }
 }
