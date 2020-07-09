@@ -28,19 +28,32 @@ import eu.beezig.core.util.UUIDUtils;
 import eu.beezig.core.util.text.Message;
 import eu.beezig.hiveapi.wrapper.player.Profiles;
 import eu.beezig.hiveapi.wrapper.player.games.BedStats;
-import eu.the5zig.mod.The5zigAPI;
-import eu.the5zig.mod.gui.ingame.Scoreboard;
-import eu.the5zig.util.minecraft.ChatColor;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class BED extends HiveMode implements IAutovote {
 
     private int bedsDestroyed;
     private String mode;
     private boolean won;
+    private int ironSummoner = 1, goldSummoner, diamondSummoner;
+
+    public int getDiamondSummoner() {
+        return diamondSummoner;
+    }
+
+    public int getGoldSummoner() {
+        return goldSummoner;
+    }
+
+    public int getIronSummoner() {
+        return ironSummoner;
+    }
+
+    public void upgradeSummoner(String name) {
+        if("Iron Ingot".equals(name)) ironSummoner++;
+        else if("Gold Ingot".equals(name)) goldSummoner++;
+        else if("Diamond".equals(name)) diamondSummoner++;
+    }
 
     public int getBedsDestroyed() {
         return bedsDestroyed;

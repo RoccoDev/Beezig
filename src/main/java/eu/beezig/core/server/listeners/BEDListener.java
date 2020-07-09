@@ -52,6 +52,7 @@ public class BEDListener extends AbstractGameListener<BED> {
         }
         else if("bed.kill.farm".equals(key)) gameMode.addKills(1);
         else if("bed.win".equals(key)) gameMode.addPoints(100);
+        else if("bed.summoner".equals(key)) gameMode.upgradeSummoner(match.get(0));
     }
 
     @Override

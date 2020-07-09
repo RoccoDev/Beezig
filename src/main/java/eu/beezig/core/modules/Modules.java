@@ -21,6 +21,8 @@ package eu.beezig.core.modules;
 
 import eu.beezig.core.Beezig;
 import eu.beezig.core.modules.items.*;
+import eu.beezig.core.modules.items.bed.ModuleResources;
+import eu.beezig.core.modules.items.bed.ModuleSummoners;
 import eu.beezig.core.modules.items.timv.ModuleGameKarma;
 import eu.beezig.core.modules.items.timv.ModuleTraitorsDiscovered;
 import eu.beezig.core.server.ServerHive;
@@ -46,6 +48,10 @@ public class Modules {
         // Trouble in Mineville
         api.registerModuleItem(plugin, "timv_traitors", ModuleTraitorsDiscovered.class, HIVE);
         api.registerModuleItem(plugin, "timv_gamekarma", ModuleGameKarma.class, HIVE);
+
+        // Bedwars
+        api.registerModuleItem(plugin, "bed_resources", ModuleResources.class, HIVE);
+        api.registerModuleItem(plugin, "bed_summoners", ModuleSummoners.class, HIVE);
     }
 
     public static boolean render() {

@@ -48,6 +48,12 @@
         },
         {
           "type": "timv_traitors"
+        },
+        {
+          "type": "bed_resources"
+        },
+        {
+          "type": "bed_summoners"
         }
       ]
     }
