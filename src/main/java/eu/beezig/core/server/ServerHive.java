@@ -147,6 +147,8 @@ public class ServerHive extends ServerInstance {
                 String id = key.replace("join.", "");
                 getGameListener().switchLobby(id);
                 if(BeezigForge.isSupported()) BeezigForge.get().setCurrentGame(id);
+                if(getGameListener().getCurrentGameMode() instanceof HiveMode)
+                    ((HiveMode) getGameListener().getCurrentGameMode()).onModeJoin();
             }
             Beezig.get().getNotificationManager().onMatch(key, match);
             Beezig.get().getAntiSniper().onMatch(key, match);

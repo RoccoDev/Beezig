@@ -66,11 +66,6 @@ public abstract class HiveMode extends GameMode {
         autovoteManager = new AutovoteManager(this);
         cachedGlobal = new GlobalStats();
         statsFetcher = new StatsFetcher(getClass());
-        statsFetcher.getJob().thenAcceptAsync(this::setGlobal).exceptionally(e -> {
-            Message.error(Message.translate("error.stats_fetch"));
-            Beezig.logger.error(e);
-            return null;
-        });
         advancedRecords = new AdvancedRecords();
         try {
             titleService = new TitleService(getIdentifier());
@@ -85,6 +80,14 @@ public abstract class HiveMode extends GameMode {
             if(temporaryPointsManager.getCurrentSession() != null)
                 sessionService = temporaryPointsManager.getCurrentSession().getService(this);
         }
+    }
+
+    protected void onModeJoin() {
+        statsFetcher.getJob().thenAcceptAsync(this::setGlobal).exceptionally(e -> {
+            Message.error(Message.translate("error.stats_fetch"));
+            Beezig.logger.error(e);
+            return null;
+        });
         gameStart = System.currentTimeMillis();
         if(this instanceof IMonthly) {
             if(!MonthlyService.ignoredModes.contains(getClass())) {

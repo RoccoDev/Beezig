@@ -41,7 +41,7 @@ public class MonthlyService {
     public String getStat(MonthlyField field) {
         if(!supportedFields.contains(field)) field = MonthlyField.POINTS;
         Number stat = field.get(profile);
-        return String.format("#%d  ▏ %s %s", profile.getPlace(),
+        return String.format("#%d ▏ %s %s", profile.getPlace(),
                 stat instanceof Double ? Message.ratio(stat) : Message.formatNumber(stat.longValue()), field.getDisplayName());
     }
 }
