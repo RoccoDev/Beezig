@@ -20,6 +20,7 @@
 package eu.beezig.core.modules.items.bed;
 
 import eu.beezig.core.Beezig;
+import eu.beezig.core.server.ServerHive;
 import eu.beezig.core.server.modes.BED;
 import eu.the5zig.mod.modules.GameModeItem;
 import eu.the5zig.mod.server.GameState;
@@ -38,7 +39,8 @@ public class ModuleSummoners extends GameModeItem<BED> {
     @Override
     protected Object getValue(boolean b) {
         BED mode;
-        if ((mode = getGameMode()) == null || !Beezig.api().isInWorld()) return "Not in world";
+        if(b) return "No data";
+        if (!ServerHive.isCurrent() || (mode = getGameMode()) == null || !Beezig.api().isInWorld()) return "Not in world";
         boolean colors = (boolean) getProperties().getSetting("showcolors").get();
         boolean shortened = (boolean) getProperties().getSetting("shortened").get();
         StringBuilder builder = new StringBuilder();

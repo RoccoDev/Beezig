@@ -27,6 +27,8 @@ import eu.beezig.core.logging.DailyService;
 import eu.beezig.core.logging.GameLogger;
 import eu.beezig.core.logging.TemporaryPointsManager;
 import eu.beezig.core.logging.session.SessionService;
+import eu.beezig.core.server.monthly.IMonthly;
+import eu.beezig.core.server.monthly.MonthlyService;
 import eu.beezig.core.util.text.Message;
 import eu.the5zig.mod.server.GameMode;
 import org.apache.commons.lang3.tuple.Pair;
@@ -57,6 +59,7 @@ public abstract class HiveMode extends GameMode {
     private SessionService sessionService;
     private File modeDir;
     protected long gameStart;
+    private MonthlyService monthlyProfile;
 
     public HiveMode() {
         global = new GlobalStats();
@@ -83,6 +86,18 @@ public abstract class HiveMode extends GameMode {
                 sessionService = temporaryPointsManager.getCurrentSession().getService(this);
         }
         gameStart = System.currentTimeMillis();
+        if(this instanceof IMonthly) {
+            if(!MonthlyService.ignoredModes.contains(getClass())) {
+                ((IMonthly) this).loadProfile().exceptionally(e -> {
+                    MonthlyService.ignoredModes.add(HiveMode.this.getClass());
+                    return null;
+                }).thenAcceptAsync(this::setMonthlyProfile);
+            }
+        }
+    }
+
+    private void setMonthlyProfile(MonthlyService monthlyProfile) {
+        this.monthlyProfile = monthlyProfile;
     }
 
     public String getGameID() {
@@ -127,6 +142,10 @@ public abstract class HiveMode extends GameMode {
 
     public File getModeDir() {
         return modeDir;
+    }
+
+    public MonthlyService getMonthlyProfile() {
+        return monthlyProfile;
     }
 
     /**

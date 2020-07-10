@@ -24,13 +24,18 @@ import eu.beezig.core.advrec.AdvRecUtils;
 import eu.beezig.core.logging.session.SessionItem;
 import eu.beezig.core.server.HiveMode;
 import eu.beezig.core.server.IAutovote;
+import eu.beezig.core.server.monthly.IMonthly;
+import eu.beezig.core.server.monthly.MonthlyField;
+import eu.beezig.core.server.monthly.MonthlyService;
 import eu.beezig.core.util.UUIDUtils;
 import eu.beezig.core.util.text.Message;
 import eu.beezig.hiveapi.wrapper.player.Profiles;
 import eu.beezig.hiveapi.wrapper.player.games.DrStats;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
-public class DR extends HiveMode implements IAutovote {
+import java.util.concurrent.CompletableFuture;
+
+public class DR extends HiveMode implements IAutovote, IMonthly {
 
     private int lastSbPoints;
     private int lastSbKills;
@@ -125,5 +130,11 @@ public class DR extends HiveMode implements IAutovote {
         if(lastSbKills == num) return;
         addKills(num - lastSbKills);
         lastSbKills = num;
+    }
+
+    @Override
+    public CompletableFuture<? extends MonthlyService> loadProfile() {
+        return new DrStats(null).getMonthlyProfile(UUIDUtils.strip(Beezig.user().getId()))
+                .thenApplyAsync(m -> new MonthlyService(m, MonthlyField.KILLS, MonthlyField.DEATHS, MonthlyField.KD));
     }
 }

@@ -44,6 +44,7 @@ public class Modules {
         api.registerModuleItem(plugin, "hive_lobby", ModuleLobby.class, HIVE);
         api.registerModuleItem(plugin, "hive_daily", ModuleDaily.class, HIVE);
         api.registerModuleItem(plugin, "hive_session", ModuleSession.class, HIVE);
+        api.registerModuleItem(plugin, "hive_monthly", ModuleMonthly.class, HIVE);
 
         // Trouble in Mineville
         api.registerModuleItem(plugin, "timv_traitors", ModuleTraitorsDiscovered.class, HIVE);

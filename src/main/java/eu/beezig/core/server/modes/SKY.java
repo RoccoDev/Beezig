@@ -24,13 +24,18 @@ import eu.beezig.core.advrec.AdvRecUtils;
 import eu.beezig.core.logging.session.SessionItem;
 import eu.beezig.core.server.HiveMode;
 import eu.beezig.core.server.IAutovote;
+import eu.beezig.core.server.monthly.IMonthly;
+import eu.beezig.core.server.monthly.MonthlyField;
+import eu.beezig.core.server.monthly.MonthlyService;
 import eu.beezig.core.util.UUIDUtils;
 import eu.beezig.core.util.text.Message;
 import eu.beezig.hiveapi.wrapper.player.Profiles;
 import eu.beezig.hiveapi.wrapper.player.games.SkyStats;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
-public class SKY extends HiveMode implements IAutovote {
+import java.util.concurrent.CompletableFuture;
+
+public class SKY extends HiveMode implements IAutovote, IMonthly {
 
     private String mode;
     private boolean won;
@@ -127,5 +132,11 @@ public class SKY extends HiveMode implements IAutovote {
 
     private void updateMode() {
         // TODO: Java 2 Fix
+    }
+
+    @Override
+    public CompletableFuture<? extends MonthlyService> loadProfile() {
+        return new SkyStats(null).getMonthlyProfile(UUIDUtils.strip(Beezig.user().getId()))
+                .thenApplyAsync(m -> new MonthlyService(m, MonthlyField.KILLS, MonthlyField.DEATHS, MonthlyField.KD));
     }
 }
