@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -99,9 +100,16 @@ public class AntiSniper {
         }
         if("msg.broadcast".equals(key)) {
             lastBroadcastSender = match.get(0);
-            if(Settings.SNIPE_PMS.get().getBoolean()) {
-                Message.info(Message.translate("msg.snipe.broadcast"));
-            }
+            String text = match.get(2);
+            MessageComponent base = new MessageComponent(Message.infoPrefix());
+            TextButton reply = new TextButton("btn.broadcast.reply.name", "btn.broadcast.reply.desc", "§a");
+            reply.doSuggestCommand("/msg " + lastBroadcastSender + " ");
+            TextButton reBroadcast = new TextButton("btn.broadcast.re.name", "btn.broadcast.re.desc", "§b");
+            reBroadcast.doRunCommand("/friend broadcast " + text);
+            base.getSiblings().add(reply);
+            base.getSiblings().add(new MessageComponent(" "));
+            base.getSiblings().add(reBroadcast);
+            Beezig.get().getAsyncExecutor().schedule(() -> Beezig.api().messagePlayerComponent(base, false), 1, TimeUnit.MILLISECONDS);
         }
     }
 
