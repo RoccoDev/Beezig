@@ -41,7 +41,7 @@ public class ProfileBadgeListener {
         Matcher m = LIST_REGEX.matcher(event.getMessage());
         if(m.matches()) {
             String[] parts = event.getMessage().split(":");
-            MessageComponent main = new MessageComponent("§a" + parts[0] + ":");
+            MessageComponent main = new MessageComponent("§a" + parts[0] + ": ");
             String[] players = parts[1].split(", ");
             for(int i = 0; i < players.length; i++) {
                 String player = players[i].replace(".", "").trim();
