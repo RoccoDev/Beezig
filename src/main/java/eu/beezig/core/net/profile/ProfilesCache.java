@@ -21,7 +21,7 @@ package eu.beezig.core.net.profile;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import eu.beezig.core.Beezig;
 import eu.beezig.core.net.packets.PacketOnlineUsers;
 import eu.the5zig.mod.util.NetworkPlayerInfo;
@@ -113,7 +113,7 @@ public class ProfilesCache {
         for(Iterator<FutureTask> iter = tasks.iterator(); iter.hasNext();) {
             FutureTask task = iter.next();
             if(task.requestId == requestId) {
-                task.consumer.accept(ImmutableSet.of());
+                task.consumer.accept(Sets.newHashSet());
                 for(UUID uuid : task.uuids) profilesCache.put(uuid, Optional.empty());
                 tasks.remove(task);
             }
@@ -126,7 +126,7 @@ public class ProfilesCache {
         if(temp != null) future.complete(temp);
         else {
             int id = lastRequestID.getAndIncrement();
-            tasks.add(new FutureTask(id, ImmutableSet.of(uuid),
+            tasks.add(new FutureTask(id, Sets.newHashSet(uuid),
                     profiles -> future.complete(profiles.isEmpty() ? Optional.empty() : Optional.of(profiles.toArray(new UserProfile[0])[0]))));
             Beezig.get().getAsyncExecutor().execute(() -> Beezig.get().getNetworkManager().getHandler()
                     .sendPacket(new PacketOnlineUsers(id, uuid)));

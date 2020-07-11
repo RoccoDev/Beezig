@@ -21,6 +21,7 @@ package eu.beezig.core.command.commands;
 
 import eu.beezig.core.Beezig;
 import eu.beezig.core.command.Command;
+import eu.beezig.core.net.packets.PacketServerStats;
 import eu.beezig.core.util.Color;
 import eu.beezig.core.util.UUIDUtils;
 import eu.beezig.core.util.text.Message;
@@ -39,7 +40,7 @@ public class OnBeezigCommand implements Command {
     @Override
     public boolean execute(String[] args) {
         if (args.length == 0) {
-            sendUsage("/ob [player]");
+            Beezig.net().getHandler().sendPacket(new PacketServerStats());
             return true;
         }
         UUIDUtils.getUUID(args[0])
