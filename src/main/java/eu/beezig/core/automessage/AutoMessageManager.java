@@ -69,7 +69,7 @@ public abstract class AutoMessageManager {
         Trigger trigger = triggers.get(game.getIdentifier());
         if (trigger != null) {
             for (Trigger.Type t : types) {
-                if (trigger.doesTrigger(ChatColor.stripColor(message), t)) {
+                if (trigger.doesTrigger(ChatColor.stripColor(message), t) && !game.isAutoMessageSent(this.getClass())) {
                     Beezig.get().getAsyncExecutor().execute(() -> {
                         try {
                             if (((ServerHive) Beezig.api().getActiveServer()).getInPartyChat()) {
@@ -83,6 +83,8 @@ public abstract class AutoMessageManager {
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
+                        } finally {
+                            game.setAutoMessageSent(this.getClass(), true);
                         }
                     });
                 }

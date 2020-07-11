@@ -21,6 +21,7 @@ package eu.beezig.core.server;
 
 import eu.beezig.core.Beezig;
 import eu.beezig.core.advrec.AdvancedRecords;
+import eu.beezig.core.automessage.AutoMessageManager;
 import eu.beezig.core.autovote.AutovoteManager;
 import eu.beezig.core.data.HiveTitle;
 import eu.beezig.core.logging.DailyService;
@@ -35,6 +36,8 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Locale;
 
 public abstract class HiveMode extends GameMode {
@@ -54,6 +57,7 @@ public abstract class HiveMode extends GameMode {
     private TitleService titleService;
     protected GameLogger logger;
     private boolean hasVoted;
+    private Map<Class<? extends AutoMessageManager>, Boolean> autoMessageSent;
     private String gameID;
     private DailyService dailyService;
     private SessionService sessionService;
@@ -73,6 +77,7 @@ public abstract class HiveMode extends GameMode {
             e.printStackTrace();
         }
         logger = new GameLogger(getIdentifier().toLowerCase(Locale.ROOT));
+        autoMessageSent = new HashMap<>();
         modeDir = new File(Beezig.get().getBeezigDir(), getIdentifier().toLowerCase(Locale.ROOT));
         TemporaryPointsManager temporaryPointsManager = Beezig.get().getTemporaryPointsManager();
         if (temporaryPointsManager != null) {
@@ -117,6 +122,14 @@ public abstract class HiveMode extends GameMode {
 
     public void setVoted(boolean hasVoted) {
         this.hasVoted = hasVoted;
+    }
+
+    public boolean isAutoMessageSent(Class<? extends AutoMessageManager> autoMessageManagerClass) {
+        return autoMessageSent.containsKey(autoMessageManagerClass) && autoMessageSent.get(autoMessageManagerClass);
+    }
+
+    public void setAutoMessageSent(Class<? extends AutoMessageManager> autoMessageManagerClass, boolean sent) {
+        autoMessageSent.put(autoMessageManagerClass, sent);
     }
 
     public AdvancedRecords getAdvancedRecords() {
