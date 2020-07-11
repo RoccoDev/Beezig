@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public abstract class AutoMessageManager {
     private Setting enabled;
@@ -72,12 +73,13 @@ public abstract class AutoMessageManager {
                     Beezig.get().getAsyncExecutor().execute(() -> {
                         try {
                             if (((ServerHive) Beezig.api().getActiveServer()).getInPartyChat()) {
-                                Thread.sleep(delay.getLong());
-                                Beezig.api().sendPlayerMessage("/p");
-                                messageQueue.add(this.message.getString());
+                                Beezig.get().getAsyncExecutor().schedule(() -> {
+                                    Beezig.api().sendPlayerMessage("/p");
+                                    messageQueue.add(this.message.getString());
+                                }, delay.getLong(), TimeUnit.MILLISECONDS);
                             } else {
-                                Thread.sleep(delay.getLong());
-                                Beezig.api().sendPlayerMessage(this.message.getString());
+                                Beezig.get().getAsyncExecutor().schedule(() -> Beezig.api().sendPlayerMessage(this.message.getString()),
+                                        delay.getLong(), TimeUnit.MILLISECONDS);
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
