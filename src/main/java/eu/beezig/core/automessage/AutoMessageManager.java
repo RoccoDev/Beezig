@@ -58,7 +58,7 @@ public abstract class AutoMessageManager {
     public abstract Setting getDelaySetting();
     public abstract DataPath getTriggersPath();
 
-    private void handleEvent(String message, Trigger.Type... types) {
+    private synchronized void handleEvent(String message, Trigger.Type... types) {
         if (!enabled.getBoolean())
             return;
 
@@ -70,6 +70,7 @@ public abstract class AutoMessageManager {
         if (trigger != null) {
             for (Trigger.Type t : types) {
                 if (trigger.doesTrigger(ChatColor.stripColor(message), t) && !game.isAutoMessageSent(this.getClass())) {
+                    game.setAutoMessageSent(this.getClass(), true);
                     Beezig.get().getAsyncExecutor().execute(() -> {
                         try {
                             if (((ServerHive) Beezig.api().getActiveServer()).getInPartyChat()) {
@@ -83,8 +84,6 @@ public abstract class AutoMessageManager {
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
-                        } finally {
-                            game.setAutoMessageSent(this.getClass(), true);
                         }
                     });
                 }
