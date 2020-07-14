@@ -55,6 +55,11 @@ public class ProfilesCache {
         return profilesCache.estimatedSize();
     }
 
+    public void update(UUID id, int role) {
+        if(role == -1) profilesCache.put(id, Optional.empty());
+        else profilesCache.put(id, Optional.of(new UserProfile(id, role)));
+    }
+
     public void putAll(int requestId, Set<UserProfile> profiles) {
         if(profiles.size() == 0) {
             noResults(requestId);

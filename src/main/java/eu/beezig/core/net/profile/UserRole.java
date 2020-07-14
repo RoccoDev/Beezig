@@ -26,6 +26,7 @@ import eu.the5zig.mod.util.component.style.MessageAction;
 import java.util.Locale;
 
 public enum UserRole {
+    NONE(-1, "§r"),
     USER(0, "§7"),
     TRANSLATOR(1, "§e"),
     DEVELOPER(2, "§b");
@@ -42,7 +43,11 @@ public enum UserRole {
         for(UserRole role : UserRole.values()) {
             if(role.index == index) return role;
         }
-        return UserRole.USER;
+        return UserRole.NONE;
+    }
+
+    public int getIndex() {
+        return index;
     }
 
     public String getDisplayName() {
