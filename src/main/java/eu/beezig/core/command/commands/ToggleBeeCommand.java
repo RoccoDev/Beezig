@@ -84,7 +84,7 @@ public class ToggleBeeCommand implements Command {
         }
         Beezig.net().getHandler().sendPacket(new PacketUserSettings(role));
         Message.info(Beezig.api().translate("msg.rank.toggle", role.getDisplayName() + Color.primary()));
-        isFakeRole = !isFakeRole;
+        isFakeRole = role != current;
         lastSettingTime = now;
         return true;
     }
