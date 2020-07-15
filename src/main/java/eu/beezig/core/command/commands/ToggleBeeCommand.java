@@ -46,12 +46,13 @@ public class ToggleBeeCommand implements Command {
 
     @Override
     public boolean execute(String[] args) {
+        if(Beezig.net().getProfile() == null || Beezig.net().getProfile().getRole().compareTo(UserRole.USER) < 1) return false;
+        UserRole current = Beezig.net().getProfile().getRole();
         long now = System.currentTimeMillis();
         if(now - lastSettingTime < 5000) {
             Message.error(Beezig.api().translate("error.wait", (5000 - (now - lastSettingTime)) / 1000));
             return true;
         }
-        UserRole current = Beezig.net().getProfile().getRole();
         if (args.length == 0) {
             UserRole changed = current;
             if(!isFakeRole) {
