@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Protocol {
+    public static final int VERSION = 1;
     private Map<Byte, Class<? extends Packet>> packets = new HashMap<>();
 
     Protocol() {
@@ -35,6 +36,9 @@ public class Protocol {
         register(0x4, PacketOnlineUsers.class);
         register(0x5, PacketServerMessage.class);
         register(0x6, PacketServerStats.class);
+        register(0x7, PacketUserSettings.class);
+        register(0x8, PacketUpdateCache.class);
+        register(0x9, PacketProfile.class);
     }
 
     private void register(int id, Class<? extends Packet> packet) {

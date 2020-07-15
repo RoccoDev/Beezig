@@ -22,6 +22,7 @@ package eu.beezig.core.net.packets;
 import eu.beezig.core.Beezig;
 import eu.beezig.core.net.Packet;
 import eu.beezig.core.net.handler.Connection;
+import eu.beezig.core.net.profile.TimezoneUtils;
 import eu.beezig.core.net.util.PacketBuffer;
 
 public class PacketAuthentication implements Packet {
@@ -39,5 +40,10 @@ public class PacketAuthentication implements Packet {
     @Override
     public void handle(Connection handler) {
         Beezig.logger.info("Authentication successful!");
+        TimezoneUtils.getTimezone().thenAcceptAsync(tz -> handler.sendPacket(new PacketProfile(tz)))
+                .exceptionally(e -> {
+                    Beezig.logger.error("Error on Profile Fetch", e);
+                    return null;
+                });
     }
 }

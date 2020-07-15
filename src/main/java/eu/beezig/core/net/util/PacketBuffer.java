@@ -62,14 +62,14 @@ public class PacketBuffer implements AutoCloseable {
         size += 4;
     }
 
-    public void writeByte(byte b) {
-        internal.writeByte(b);
-        size++;
-    }
-
     public void writeLong(long l) {
         internal.writeLong(l);
         size += 8;
+    }
+
+    public void writeByte(byte b) {
+        internal.writeByte(b);
+        size++;
     }
 
     public UUID readUUID() {
@@ -91,16 +91,20 @@ public class PacketBuffer implements AutoCloseable {
         return buf;
     }
 
+    public boolean readBoolean() {
+        return readByte() == 1;
+    }
+
+    public long readLong() {
+        return internal.readLong();
+    }
+
     public <T extends Enum> T readEnum(Class<T> type) {
         return type.getEnumConstants()[internal.readInt()];
     }
 
     public int readInt() {
         return internal.readInt();
-    }
-
-    public long readLong() {
-        return internal.readLong();
     }
 
     public byte readByte() {

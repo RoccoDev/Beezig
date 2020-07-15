@@ -15,6 +15,8 @@ public class PacketUserSettings implements Packet {
         this.newRole = newRole;
     }
 
+    public PacketUserSettings() {}
+
     @Override
     public void read(PacketBuffer buffer) {
 

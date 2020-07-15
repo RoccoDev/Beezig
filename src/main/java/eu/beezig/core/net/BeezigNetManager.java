@@ -23,6 +23,7 @@ import eu.beezig.core.Beezig;
 import eu.beezig.core.net.handler.Connection;
 import eu.beezig.core.net.handler.NetworkDecoder;
 import eu.beezig.core.net.handler.NetworkEncoder;
+import eu.beezig.core.net.profile.OwnProfile;
 import eu.beezig.core.net.profile.ProfilesCache;
 import eu.beezig.core.net.session.NetSessionManager;
 import io.netty.bootstrap.Bootstrap;
@@ -38,6 +39,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class BeezigNetManager {
 
+    private OwnProfile profile;
     private Protocol protocol;
     private boolean reconnecting;
     private AtomicBoolean connected = new AtomicBoolean(false);
@@ -74,6 +76,14 @@ public class BeezigNetManager {
                 e.printStackTrace();
             }
         });
+    }
+
+    public synchronized OwnProfile getProfile() {
+        return profile;
+    }
+
+    public synchronized void setProfile(OwnProfile profile) {
+        this.profile = profile;
     }
 
     public AtomicBoolean isConnected() {

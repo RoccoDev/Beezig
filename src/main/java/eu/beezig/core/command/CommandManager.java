@@ -40,6 +40,7 @@ public class CommandManager {
         commandExecutors.add(new SayCommand());
         commandExecutors.add(new BroadcastReplyCommand());
         commandExecutors.add(new OnBeezigCommand());
+        commandExecutors.add(new ToggleBeeCommand());
     }
 
     @EventHandler

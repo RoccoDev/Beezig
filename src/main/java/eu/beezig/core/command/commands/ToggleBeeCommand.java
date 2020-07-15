@@ -21,12 +21,14 @@ package eu.beezig.core.command.commands;
 
 import eu.beezig.core.Beezig;
 import eu.beezig.core.command.Command;
-import eu.beezig.core.net.packets.PacketServerStats;
 import eu.beezig.core.net.packets.PacketUserSettings;
 import eu.beezig.core.net.profile.UserRole;
 import eu.beezig.core.util.Color;
-import eu.beezig.core.util.UUIDUtils;
 import eu.beezig.core.util.text.Message;
+
+import java.util.Locale;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ToggleBeeCommand implements Command {
     @Override
@@ -39,25 +41,51 @@ public class ToggleBeeCommand implements Command {
         return new String[]{"/togglebee", "/btogglerank"};
     }
 
+    private boolean isFakeRole;
+    private long lastSettingTime;
+
     @Override
     public boolean execute(String[] args) {
-        if (args.length == 0) {
-            UserRole def = UserRole.USER; // TODO Change conditionally if user is a dev
-            Beezig.net().getHandler().sendPacket(new PacketUserSettings(def));
+        long now = System.currentTimeMillis();
+        if(now - lastSettingTime < 5000) {
+            Message.error(Beezig.api().translate("error.wait", (5000 - (now - lastSettingTime)) / 1000));
             return true;
         }
-        UUIDUtils.getUUID(args[0])
-                .thenAcceptAsync(uuid -> Beezig.net().getProfilesCache().getProfile(uuid)
-                        .thenAcceptAsync(profile -> {
-                            if (!profile.isPresent())
-                                Message.error(Beezig.api().translate("msg.user.offline", args[0]));
-                            else Message.info(Beezig.api().translate("msg.user.online",
-                                    Color.accent() + args[0] + Color.primary(), profile.get().getRole().getDisplayName()));
-                        })).exceptionally(e -> {
-                            Message.error(Message.translate("error.online_users"));
-                            Beezig.logger.error(e);
-                            return null;
-        });
+        UserRole current = Beezig.net().getProfile().getRole();
+        if (args.length == 0) {
+            UserRole changed = current;
+            if(!isFakeRole) {
+                if(current == UserRole.DEVELOPER) changed = UserRole.NONE;
+                else changed = UserRole.USER;
+            }
+            Beezig.net().getHandler().sendPacket(new PacketUserSettings(changed));
+            Message.info(Beezig.api().translate("msg.rank.toggle", changed.getDisplayName() + Color.primary()));
+            isFakeRole = !isFakeRole;
+            lastSettingTime = now;
+            return true;
+        }
+        String newName = args[0];
+        UserRole role;
+        try {
+            role = UserRole.valueOf(newName.toUpperCase(Locale.ROOT));
+        }
+        catch (IllegalArgumentException ex) {
+            String possibleValues = Stream.of(UserRole.values()).map(UserRole::name).collect(Collectors.joining(", "));
+            Message.error(Beezig.api().translate("error.enum", "§6" + possibleValues));
+            return true;
+        }
+        if(role == UserRole.NONE && current.compareTo(UserRole.DEVELOPER) < 0) {
+            Message.error(Beezig.api().translate("error.rank.perm", UserRole.DEVELOPER.getDisplayName() + "§c"));
+            return true;
+        }
+        if(current.compareTo(role) < 0) {
+            Message.error(Beezig.api().translate("error.rank.perm", role.getDisplayName() + "§c"));
+            return true;
+        }
+        Beezig.net().getHandler().sendPacket(new PacketUserSettings(role));
+        Message.info(Beezig.api().translate("msg.rank.toggle", role.getDisplayName() + Color.primary()));
+        isFakeRole = !isFakeRole;
+        lastSettingTime = now;
         return true;
     }
 }
