@@ -77,8 +77,10 @@ public class Beezig {
 
     public Beezig(boolean laby, File labyDir) {
         this.laby = laby;
-        if(labyDir != null)
+        if(labyDir != null) {
             this.beezigDir = new File(labyDir, "Beezig");
+            beezigDir.mkdirs();
+        }
     }
 
     public Beezig() {
