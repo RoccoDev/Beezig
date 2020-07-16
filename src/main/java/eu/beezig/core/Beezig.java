@@ -43,6 +43,7 @@ import eu.the5zig.mod.ModAPI;
 import eu.the5zig.mod.The5zigAPI;
 import eu.the5zig.mod.event.EventHandler;
 import eu.the5zig.mod.event.LoadEvent;
+import eu.the5zig.mod.gui.IOverlay;
 import eu.the5zig.mod.plugin.Plugin;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -94,6 +95,8 @@ public class Beezig {
 
     @EventHandler
     public void load(LoadEvent event) {
+        IOverlay progress = The5zigAPI.getAPI().createOverlay();
+        progress.displayMessage("Beezig", "Loading...");
         setupLogger();
         logger.info("Load started");
         long timeStart = System.currentTimeMillis();
@@ -160,6 +163,7 @@ public class Beezig {
         serviceLoader.attemptLoad();
 
         logger.info(String.format("Load complete in %d ms.", System.currentTimeMillis() - timeStart));
+        progress.displayMessage("Beezig", "Loaded!");
     }
 
     private void setupLogger() {
