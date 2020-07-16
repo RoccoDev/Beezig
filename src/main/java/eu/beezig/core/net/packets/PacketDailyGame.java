@@ -25,14 +25,15 @@ import eu.beezig.core.net.util.PacketBuffer;
 
 public class PacketDailyGame implements Packet {
 
-    public PacketDailyGame(String mode, String gameid, int points) {
+    public PacketDailyGame(String mode, long gameid, int points) {
         this.mode = mode;
         this.gameid = gameid;
         this.points = points;
     }
 
-    private String mode, gameid;
-    private int points;
+    private final String mode;
+    private final int points;
+    private final long gameid;
 
     @Override
     public void read(PacketBuffer buffer) {
@@ -43,7 +44,7 @@ public class PacketDailyGame implements Packet {
     public void write(PacketBuffer buffer) {
         buffer.writeString(mode);
         buffer.writeInt(points);
-        buffer.writeString(gameid);
+        buffer.writeLong(gameid);
     }
 
     @Override

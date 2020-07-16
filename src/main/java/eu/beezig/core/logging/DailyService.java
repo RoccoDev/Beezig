@@ -64,7 +64,7 @@ public class DailyService {
         if(gameId != null) {
             Beezig.get().getAsyncExecutor()
                     .execute(() -> Beezig.get().getNetworkManager().getHandler()
-                            .sendPacket(new PacketDailyGame(mode, gameId, points)));
+                            .sendPacket(new PacketDailyGame(mode, Long.parseLong(gameId), points)));
         }
     }
 }
