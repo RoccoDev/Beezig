@@ -41,6 +41,7 @@ public class CommandManager {
         commandExecutors.add(new BroadcastReplyCommand());
         commandExecutors.add(new OnBeezigCommand());
         commandExecutors.add(new ToggleBeeCommand());
+        commandExecutors.add(new ProfileCommand());
     }
 
     @EventHandler
