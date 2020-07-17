@@ -59,7 +59,7 @@ public class BeezigServiceLoader {
             if(mgr == null || mgr.getProfilesCache() == null) return 0;
             Optional<UserProfile> profile = Beezig.get().getNetworkManager().getProfilesCache().getIfPresent(uuid);
             if(profile == null) return 0;
-            return profile.map(user -> user.getRole().ordinal() + 1).orElse(0);
+            return profile.map(user -> user.getRole().getIndex() + 1).orElse(0);
         });
         mainService.registerTitle(raw -> {
             if(!ServerHive.isCurrent()) return null;
