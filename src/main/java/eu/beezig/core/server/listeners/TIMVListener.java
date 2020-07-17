@@ -24,6 +24,8 @@ import eu.the5zig.mod.server.AbstractGameListener;
 import eu.the5zig.mod.server.IPatternResult;
 import org.apache.commons.lang3.StringUtils;
 
+import static eu.the5zig.mod.server.GameState.GAME;
+
 public class TIMVListener extends AbstractGameListener<TIMV> {
     @Override
     public Class<TIMV> getGameMode() {
@@ -44,7 +46,10 @@ public class TIMVListener extends AbstractGameListener<TIMV> {
     public void onMatch(TIMV gameMode, String key, IPatternResult match) {
         if("timv.points_gain".equals(key)) gameMode.addKarma(Integer.parseInt(match.get(0), 10));
         else if("timv.points_loss".equals(key)) gameMode.addPoints(-Integer.parseInt(match.get(0), 10));
-        else if("timv.start".equals(key)) gameMode.setRole(match.get(0));
+        else if("timv.start".equals(key)) {
+            gameMode.setRole(match.get(0));
+            gameMode.setState(GAME);
+        }
         else if("timv.discovery".equals(key)) {
             String role = match.get(0);
             if("a Traitor".equals(role)) gameMode.setTraitorsDiscovered(gameMode.getTraitorsDiscovered() + 1);
