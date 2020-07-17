@@ -22,14 +22,17 @@ package eu.beezig.core.command.commands;
 import eu.beezig.core.Beezig;
 import eu.beezig.core.command.Command;
 import eu.beezig.core.config.Settings;
+import eu.beezig.core.util.ArrayUtils;
 import eu.beezig.core.util.Color;
 import eu.beezig.core.util.text.Message;
+import eu.beezig.core.util.text.StringUtils;
 import eu.the5zig.mod.util.component.MessageComponent;
 import eu.the5zig.mod.util.component.style.MessageAction;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 public class SettingsCommand implements Command {
     @Override
@@ -46,16 +49,13 @@ public class SettingsCommand implements Command {
     public boolean execute(String[] args) {
         Settings setting;
         if(args.length == 0) {
-            Message.info(Message.translate("msg.config.list"));
-            for(Settings key : Settings.values()) {
-                MessageComponent component = new MessageComponent(String.format("%s- %s%s: %s%s", Color.accent(), Color.primary(), key.getName(), Color.accent(), key.get().toString()));
-                MessageComponent desc = new MessageComponent(String.format("§7%s\n§m                \n%s%s", key.name().toLowerCase(Locale.ROOT), Color.primary(), key.getDescription()));
-                component.getStyle().setOnHover(new MessageAction(MessageAction.Action.SHOW_TEXT, desc));
-                component.getStyle().setOnClick(new MessageAction(MessageAction.Action.SUGGEST_COMMAND, String.format("/bsettings %s ", key.name())));
-                Beezig.api().messagePlayerComponent(component, false);
-            }
+            show(1);
         }
         else if(args.length == 1) {
+            if(args[0].matches("\\d+")) {
+                show(Integer.parseInt(args[0], 10));
+                return true;
+            }
             if((setting = getSetting(args[0])) == null) return true;
             Message.info(String.format("%s%s %s(%s):%s %s", Color.accent(), setting.getName(), Color.primary(),
                     setting.getDescription(), Color.primary(), setting.get().getString()));
@@ -72,6 +72,24 @@ public class SettingsCommand implements Command {
             }
         }
         return true;
+    }
+
+    private void show(int pageNo) {
+        Settings[] page = ArrayUtils.getPage(Settings.values(), pageNo - 1, 10);
+        if(page == null) {
+            Message.error(Message.translate("error.page"));
+            return;
+        }
+        Beezig.api().messagePlayer(StringUtils.linedCenterText(Color.primary(), Color.accent()
+                + Message.translate("msg.config.list") + " " + Beezig.api().translate("msg.page", pageNo)));
+        for(Settings key : page) {
+            MessageComponent component = new MessageComponent(String.format("%s- %s%s: %s%s", Color.accent(), Color.primary(), key.getName(), Color.accent(), key.get().toString()));
+            MessageComponent desc = new MessageComponent(String.format("§7%s\n§m                \n%s%s", key.name().toLowerCase(Locale.ROOT), Color.primary(), key.getDescription()));
+            component.getStyle().setOnHover(new MessageAction(MessageAction.Action.SHOW_TEXT, desc));
+            component.getStyle().setOnClick(new MessageAction(MessageAction.Action.SUGGEST_COMMAND, String.format("/bsettings %s ", key.name())));
+            Beezig.api().messagePlayerComponent(component, false);
+        }
+        Beezig.api().messagePlayer(StringUtils.linedCenterText(Color.primary(), Color.accent() + Message.translate("cmd.settings")));
     }
 
     private Settings getSetting(String name) {

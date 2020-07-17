@@ -24,6 +24,7 @@ import eu.beezig.core.command.Command;
 import eu.beezig.core.net.profile.OwnProfile;
 import eu.beezig.core.util.Color;
 import eu.beezig.core.util.text.Message;
+import eu.beezig.core.util.text.StringUtils;
 
 public class ProfileCommand implements Command {
     @Override
@@ -43,7 +44,7 @@ public class ProfileCommand implements Command {
             Message.error(Message.translate("error.profile"));
             return true;
         }
-        Message.bar();
+        Beezig.api().messagePlayer(StringUtils.linedCenterText("§7", Color.accent() + Message.translate("msg.profile")));
         Beezig.api().messagePlayer(" " + Color.primary() + Beezig.api().translate("msg.profile.id", Color.accent() + profile.getId() + Color.primary(),
                 Color.accent() + Message.date(profile.getFirstLogin()) + Color.primary()));
         Beezig.api().messagePlayer(" " + Color.primary() + Beezig.api().translate("msg.profile.rank", profile.getRole().getDisplayName()));
