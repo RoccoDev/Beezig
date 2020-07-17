@@ -19,6 +19,7 @@
 
 package eu.beezig.core.server.listeners;
 
+import eu.beezig.core.Beezig;
 import eu.beezig.core.server.modes.TIMV;
 import eu.the5zig.mod.server.AbstractGameListener;
 import eu.the5zig.mod.server.IPatternResult;
@@ -49,6 +50,7 @@ public class TIMVListener extends AbstractGameListener<TIMV> {
         else if("timv.start".equals(key)) {
             gameMode.setRole(match.get(0));
             gameMode.setState(GAME);
+            Beezig.api().sendPlayerMessage("/gameid");
         }
         else if("timv.discovery".equals(key)) {
             String role = match.get(0);
