@@ -115,8 +115,8 @@ public class TIMV extends HiveMode implements IAutovote, IMonthly {
     }
 
     public void setRole(String role) {
-        if(role.startsWith("A TRAITOR")) this.role = Role.TRAITOR;
-        else if(role.startsWith("A DETECTIVE")) this.role = Role.DETECTIVE;
+        if(role.startsWith("TRAITOR")) this.role = Role.TRAITOR;
+        else if(role.startsWith("DETECTIVE")) this.role = Role.DETECTIVE;
         else this.role = Role.INNOCENT;
         calculateRoles();
     }
