@@ -28,7 +28,7 @@ import java.util.Locale;
 public enum UserRole {
     NONE(-1, "§r"),
     USER(0, "§7"),
-    TRANSLATOR(1, "§e"),
+    TRANSLATOR(1, "§6"),
     DEVELOPER(2, "§b");
 
     private int index;
