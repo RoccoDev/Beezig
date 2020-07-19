@@ -56,7 +56,7 @@ public class ProfilesCache {
     }
 
     public void update(UUID id, int role) {
-        if(role == -1) profilesCache.put(id, Optional.empty());
+        if(role == UserRole.NONE.getIndex()) profilesCache.put(id, Optional.empty());
         else profilesCache.put(id, Optional.of(new UserProfile(id, role)));
     }
 
