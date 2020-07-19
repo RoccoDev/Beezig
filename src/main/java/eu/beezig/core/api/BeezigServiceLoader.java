@@ -73,6 +73,7 @@ public class BeezigServiceLoader {
             }
             return null;
         });
+        mainService.registerTitle(Message::translate);
         mainService.registerFormatNumber(Message::formatNumber);
         mainService.loadConfig(Beezig.get().getBeezigDir());
         mainService.addCommands(new ArrayList<>(CommandManager.commandExecutors));

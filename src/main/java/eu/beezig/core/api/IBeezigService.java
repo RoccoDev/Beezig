@@ -29,6 +29,7 @@ public interface IBeezigService {
     void registerUserIndicator(Function<UUID, Integer> callback);
     void registerTitle(Function<String, String> callback);
     void registerFormatNumber(Function<Long, String> callback);
+    void registerTranslate(Function<String, String> callback);
 
     // Functions (Beezig -> BeezigForge)
     void setOnHive(boolean update);
