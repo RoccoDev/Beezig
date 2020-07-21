@@ -79,7 +79,10 @@ public class PacketBuffer implements AutoCloseable {
     }
 
     public String readString() {
-        byte length = internal.readByte();
+        return readString(internal.readByte());
+    }
+
+    public String readString(int length) {
         String string = internal.toString(internal.readerIndex(), length, StandardCharsets.UTF_8);
         internal.readerIndex(internal.readerIndex() + length);
         return string;
