@@ -20,6 +20,7 @@
 package eu.beezig.core.config;
 
 import eu.beezig.core.Beezig;
+import eu.beezig.core.util.Color;
 import eu.beezig.core.util.text.Message;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -66,6 +67,7 @@ public class BeezigConfiguration {
                 return null;
             }).filter(Objects::nonNull).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y, HashMap::new));
         }
+        Color.refreshCache();
     }
 
     Setting get(Settings key) {
@@ -87,6 +89,7 @@ public class BeezigConfiguration {
             Object casted = castValue(key.getSettingType(), newValue);
             if (casted == null) return false;
             getOrPutDefault(key).setValue(casted);
+            onSettingsChange(key);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -95,7 +98,11 @@ public class BeezigConfiguration {
     }
 
     private Object castValue(Class cls, String value) throws Exception {
-        if (cls == Boolean.class) return Boolean.parseBoolean(value);
+        if (cls == Boolean.class) {
+            if("on".equalsIgnoreCase(value) || "yes".equalsIgnoreCase(value)) return true;
+            if("off".equalsIgnoreCase(value) || "no".equalsIgnoreCase(value)) return false;
+            return Boolean.parseBoolean(value);
+        }
         if (cls == Integer.class) return Integer.parseInt(value, 10);
         if (cls == Double.class) return Double.parseDouble(value);
         if (cls == Float.class) return Float.parseFloat(value);
@@ -130,5 +137,9 @@ public class BeezigConfiguration {
         try (BufferedWriter buffer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8)) {
             buffer.write(configJson.toJSONString());
         }
+    }
+
+    private void onSettingsChange(Settings key) {
+        if(key == Settings.COLOR_ACCENT || key == Settings.COLOR_PRIMARY) Color.refreshCache();
     }
 }

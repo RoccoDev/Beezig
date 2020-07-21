@@ -22,11 +22,18 @@ package eu.beezig.core.util;
 import eu.beezig.core.config.Settings;
 
 public class Color {
+
+    private static String primary, accent;
+
     public static String primary() {
-        return Settings.COLOR_PRIMARY.get().getValue().toString();
+        return primary;
+    }
+    public static String accent() {
+        return accent;
     }
 
-    public static String accent() {
-        return Settings.COLOR_ACCENT.get().getValue().toString();
+    public static void refreshCache() {
+        primary = Settings.COLOR_PRIMARY.get().getValue().toString();
+        accent = Settings.COLOR_ACCENT.get().getValue().toString();
     }
 }
