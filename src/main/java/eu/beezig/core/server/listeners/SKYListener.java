@@ -33,7 +33,7 @@ public class SKYListener extends AbstractGameListener<SKY> {
 
     @Override
     public boolean matchLobby(String s) {
-        return "sky".equals(s);
+        return s.matches("sky[dt]?");
     }
 
     @Override

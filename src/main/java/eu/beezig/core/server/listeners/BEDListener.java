@@ -32,7 +32,7 @@ public class BEDListener extends AbstractGameListener<BED> {
 
     @Override
     public boolean matchLobby(String s) {
-        return "bed".equals(s);
+        return s.matches("bed[dtx]?");
     }
 
     @Override

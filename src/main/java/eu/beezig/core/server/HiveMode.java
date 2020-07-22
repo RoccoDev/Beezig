@@ -64,6 +64,7 @@ public abstract class HiveMode extends GameMode {
     private File modeDir;
     protected long gameStart;
     private MonthlyService monthlyProfile;
+    private boolean init;
 
     public HiveMode() {
         global = new GlobalStats();
@@ -88,18 +89,21 @@ public abstract class HiveMode extends GameMode {
     }
 
     protected void onModeJoin() {
-        statsFetcher.getJob().thenAcceptAsync(this::setGlobal).exceptionally(e -> {
-            Message.error(Message.translate("error.stats_fetch"));
-            Beezig.logger.error(e);
-            return null;
-        });
-        gameStart = System.currentTimeMillis();
-        if(this instanceof IMonthly) {
-            if(!MonthlyService.ignoredModes.contains(getClass())) {
-                ((IMonthly) this).loadProfile().exceptionally(e -> {
-                    MonthlyService.ignoredModes.add(HiveMode.this.getClass());
-                    return null;
-                }).thenAcceptAsync(this::setMonthlyProfile);
+        if(!init) {
+            init = true;
+            statsFetcher.getJob().thenAcceptAsync(this::setGlobal).exceptionally(e -> {
+                Message.error(Message.translate("error.stats_fetch"));
+                Beezig.logger.error(e);
+                return null;
+            });
+            gameStart = System.currentTimeMillis();
+            if (this instanceof IMonthly) {
+                if (!MonthlyService.ignoredModes.contains(getClass())) {
+                    ((IMonthly) this).loadProfile().exceptionally(e -> {
+                        MonthlyService.ignoredModes.add(HiveMode.this.getClass());
+                        return null;
+                    }).thenAcceptAsync(this::setMonthlyProfile);
+                }
             }
         }
     }

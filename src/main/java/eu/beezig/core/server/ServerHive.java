@@ -40,6 +40,7 @@ public class ServerHive extends ServerInstance {
     private HivePlayer profile;
     private boolean inParty;
     private boolean inPartyChat;
+    private ListenerHive listener;
 
     public long getTokens() {
         return tokens;
@@ -55,6 +56,9 @@ public class ServerHive extends ServerInstance {
 
     public void setLobby(String lobby) {
         this.lobby = lobby;
+        if(getGameListener().getCurrentGameMode() == null) {
+            listener.updateLobby(lobby.replaceAll("\\d", "").toLowerCase(Locale.ROOT));
+        }
     }
 
     public HivePlayer getProfile() {
@@ -76,7 +80,7 @@ public class ServerHive extends ServerInstance {
     @Override
     public void registerListeners() {
         GameListenerRegistry registry = getGameListener();
-        registry.registerListener(new ListenerHive());
+        registry.registerListener(listener = new ListenerHive());
         registry.registerListener(new TIMVListener());
         registry.registerListener(new BEDListener());
         registry.registerListener(new SKYListener());
@@ -127,6 +131,8 @@ public class ServerHive extends ServerInstance {
     }
 
     private class ListenerHive extends AbstractGameListener<GameMode> {
+        private boolean readyForLobby = true;
+
         @Override
         public Class<GameMode> getGameMode() {
             return null;
@@ -137,25 +143,31 @@ public class ServerHive extends ServerInstance {
             return false;
         }
 
+        void updateLobby(String id) {
+            getGameListener().switchLobby(id);
+            if(BeezigForge.isSupported()) BeezigForge.get().setCurrentGame(id);
+            if(getGameListener().getCurrentGameMode() instanceof HiveMode)
+                ((HiveMode) getGameListener().getCurrentGameMode()).onModeJoin();
+        }
+
         @Override
         public void onMatch(GameMode gameMode, String key, IPatternResult match) {
             if(key == null) return;
             Beezig.logger.debug(String.format("[ServerHive] Matched key %s, %d groups", key, match.size()));
 
             if(gameMode == null && key.startsWith("join.")) {
-                WorldTask.submit(() -> Beezig.api().sendPlayerMessage("/whereami"));
                 String id = key.replace("join.", "");
-                getGameListener().switchLobby(id);
-                if(BeezigForge.isSupported()) BeezigForge.get().setCurrentGame(id);
-                if(getGameListener().getCurrentGameMode() instanceof HiveMode)
-                    ((HiveMode) getGameListener().getCurrentGameMode()).onModeJoin();
+                updateLobby(id);
             }
             Beezig.get().getNotificationManager().onMatch(key, match);
             Beezig.get().getAntiSniper().onMatch(key, match);
             if("tokens".equals(key)) ServerHive.this.tokens = Integer.parseInt(match.get(1), 10);
             else if("tokens.boost".equals(key)) ServerHive.this.tokens += Integer.parseInt(match.get(0), 10);
             else if("medals".equals(key)) ServerHive.this.medals = Integer.parseInt(match.get(0), 10);
-            else if("lobby".equals(key)) ServerHive.this.setLobby(match.get(0));
+            else if("lobby".equals(key)) {
+                readyForLobby = true;
+                ServerHive.this.setLobby(match.get(0));
+            }
             else if("gameid".equals(key) && gameMode instanceof HiveMode) ((HiveMode)gameMode).setGameID(match.get(0));
             else if("map".equals(key) && gameMode instanceof HiveMode) ((HiveMode)gameMode).setMap(match.get(0));
             else if("autovote.map".equals(key) && gameMode instanceof HiveMode) ((HiveMode)gameMode).getAutovoteManager().parse(match);
@@ -181,16 +193,14 @@ public class ServerHive extends ServerInstance {
         @Override
         public void onServerConnect(GameMode gameMode) {
             if(gameMode instanceof HiveMode) {
-                WorldTask.submit(() -> Beezig.api().sendPlayerMessage("/whereami"));
                 if(gameMode.getState() != GameState.LOBBY) ((HiveMode)gameMode).end();
+            }
+            if(readyForLobby) {
+                readyForLobby = false;
+                WorldTask.submit(() -> Beezig.api().sendPlayerMessage("/whereami"));
             }
             getGameListener().switchLobby(null);
             if(BeezigForge.isSupported()) BeezigForge.get().setCurrentGame(null);
-        }
-
-        @Override
-        public void onServerJoin() {
-            WorldTask.submit(() -> Beezig.api().sendPlayerMessage("/whereami"));
         }
 
         @Override
