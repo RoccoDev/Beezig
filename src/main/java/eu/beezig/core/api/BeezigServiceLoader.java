@@ -28,6 +28,7 @@ import eu.beezig.core.server.HiveMode;
 import eu.beezig.core.server.ServerHive;
 import eu.beezig.core.server.TitleService;
 import eu.beezig.core.util.text.Message;
+import eu.beezig.core.util.text.StringUtils;
 import eu.the5zig.mod.server.GameMode;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -73,7 +74,7 @@ public class BeezigServiceLoader {
             }
             return null;
         });
-        mainService.registerTitle(Message::translate);
+        mainService.registerNormalizeMapName(StringUtils::normalizeMapName);
         mainService.registerFormatNumber(Message::formatNumber);
         mainService.registerTranslate(Message::translate);
         mainService.loadConfig(Beezig.get().getBeezigDir());

@@ -91,7 +91,7 @@ public class AutovoteManager {
         }
     }
 
-    private ArrayList<String> getFavoriteMaps(String modeId) throws Exception {
+    public ArrayList<String> getFavoriteMaps(String modeId) throws Exception {
         File f = new File(Beezig.get().getBeezigDir(), "autovote.json");
         if(!f.exists()) {
             f.createNewFile();

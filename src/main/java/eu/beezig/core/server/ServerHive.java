@@ -57,7 +57,9 @@ public class ServerHive extends ServerInstance {
     public void setLobby(String lobby) {
         this.lobby = lobby;
         if(getGameListener().getCurrentGameMode() == null) {
-            listener.updateLobby(lobby.replaceAll("\\d", "").toLowerCase(Locale.ROOT));
+            String id = lobby.replaceAll("\\d", "").toLowerCase(Locale.ROOT);
+            if("hub".equals(id) || "premhub".equals(id)) return;
+            listener.updateLobby(id);
         }
     }
 
@@ -86,6 +88,7 @@ public class ServerHive extends ServerInstance {
         registry.registerListener(new SKYListener());
         registry.registerListener(new HIDEListener());
         registry.registerListener(new DRListener());
+        registry.registerListener(new SHUListener());
     }
 
     @Override

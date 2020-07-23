@@ -30,10 +30,12 @@ public interface IBeezigService {
     void registerTitle(Function<String, String> callback);
     void registerFormatNumber(Function<Long, String> callback);
     void registerTranslate(Function<String, String> callback);
+    void registerNormalizeMapName(Function<String, String> callback);
 
     // Functions (Beezig -> BeezigForge)
     void setOnHive(boolean update);
     void setCurrentGame(String game);
     void addCommands(List<Object> commands);
     void loadConfig(File beezigDir);
+    void autovoteShuffle(List<String> favorites);
 }

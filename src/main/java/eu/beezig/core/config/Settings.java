@@ -41,6 +41,7 @@ public enum Settings {
     // Autovote
     AUTOVOTE(true),
     AUTOVOTE_RANDOM(true),
+    AUTOVOTE_SHUFFLE(true),
 
     // Advanced Records
     ADVANCED_RECORDS(true),
