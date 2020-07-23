@@ -32,12 +32,11 @@ import eu.the5zig.mod.util.component.style.MessageAction;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Locale;
-import java.util.regex.Pattern;
 
 public class SettingsCommand implements Command {
     @Override
     public String getName() {
-        return "settings";
+        return "bsettings";
     }
 
     @Override
