@@ -50,6 +50,7 @@ public class BeezigConfiguration {
             config = Stream.of(Settings.values()).map(key -> new HashMap.SimpleEntry<>(key, new Setting(key.getDefaultValue())))
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y, HashMap::new));
             save();
+            Color.refreshCache();
             return;
         }
         try (BufferedReader buffer = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8)) {
