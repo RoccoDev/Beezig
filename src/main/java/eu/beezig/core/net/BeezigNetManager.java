@@ -48,7 +48,7 @@ public class BeezigNetManager {
     private static final int MAX_RECONNECT_TIME = 400;
     private Connection handler;
     private NetSessionManager sessionManager;
-    private ProfilesCache profilesCache;
+    private static ProfilesCache profilesCache;
 
     public NetSessionManager getSessionManager() {
         return sessionManager;
