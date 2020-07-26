@@ -1,6 +1,8 @@
 language: java
 jdk:
   - openjdk8
+before_install:
+  - git log -1 --pretty=format:%h > src/main/resources/version.txt
 install: ./gradlew build
 deploy:
   - provider: pages

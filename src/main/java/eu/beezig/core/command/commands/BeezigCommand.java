@@ -19,6 +19,7 @@
 
 package eu.beezig.core.command.commands;
 
+import eu.beezig.core.Beezig;
 import eu.beezig.core.Constants;
 import eu.beezig.core.command.Command;
 import eu.beezig.core.util.SystemInfo;
@@ -42,7 +43,7 @@ public class BeezigCommand implements Command {
     public boolean execute(String[] args) {
         if(args.length == 0) {
             Message.bar();
-            Message.info(String.format("Running Beezig %s", Constants.VERSION));
+            Message.info(String.format("Running Beezig %s (%s)", Constants.VERSION, Beezig.getVersion ()));
             Message.bar();
         }
         else {

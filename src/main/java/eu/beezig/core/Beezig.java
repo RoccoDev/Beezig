@@ -52,6 +52,7 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 
 import java.io.File;
+import java.util.Scanner;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -90,6 +91,15 @@ public class Beezig {
             NetSessionManager.provider = new The5zigProvider();
         } catch (ReflectiveOperationException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static String getVersion() {
+        try {
+            return new Scanner(Beezig.class.getResourceAsStream("/version.txt"), "UTF-8").useDelimiter("\\A").next();
+        } catch (Exception e) {
+            logger.error(String.format("Couldn't load commit from version.txt: %s", e.getMessage()));
+            return "development";
         }
     }
 
