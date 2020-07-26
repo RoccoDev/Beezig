@@ -52,7 +52,7 @@ public class BUpdateCommand implements Command {
     @Override
     public boolean execute(String[] args) {
         if (updated) {
-            Message.error("update.error.already_updated");
+            Message.error(Beezig.api().translate("update.error.already_updated"));
             return true;
         }
         if (args.length == 1 && args[0].equals("confirm")) {
