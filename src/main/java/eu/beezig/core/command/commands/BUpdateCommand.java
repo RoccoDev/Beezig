@@ -20,8 +20,10 @@
 package eu.beezig.core.command.commands;
 
 import eu.beezig.core.Beezig;
+import eu.beezig.core.Constants;
 import eu.beezig.core.command.Command;
 import eu.beezig.core.util.text.Message;
+import org.apache.commons.lang3.SystemUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -66,7 +68,9 @@ public class BUpdateCommand implements Command {
                     URL updateUrl = new URL(String.format("https://go.beezig.eu/%s-beta", code));
                     URLConnection connection = updateUrl.openConnection();
                     // We need this to "bypass" Cloudflare
-                    connection.setRequestProperty("User-Agent", "Beezig/7.0");
+                    connection.setRequestProperty("User-Agent", String.format("Beezig/7.0 (%s) Beezig/%s-%s",
+                            (SystemUtils.IS_OS_MAC ? "Macintosh" : System.getProperty("os.name")),
+                            Constants.VERSION, Beezig.getVersion()));
                     ReadableByteChannel byteChannel = Channels.newChannel(connection.getInputStream());
                     FileChannel fileChannel = new FileOutputStream(
                             new File(Beezig.class.getProtectionDomain().getCodeSource().getLocation().toURI())).getChannel();
