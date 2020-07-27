@@ -28,6 +28,7 @@ import eu.beezig.core.util.text.Message;
 import eu.beezig.core.util.text.StringUtils;
 import eu.the5zig.mod.util.component.MessageComponent;
 import eu.the5zig.mod.util.component.style.MessageAction;
+import org.apache.commons.lang3.text.WordUtils;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -84,6 +85,15 @@ public class SettingsCommand implements Command {
         for(Settings key : page) {
             MessageComponent component = new MessageComponent(String.format("%s- %s%s: %s%s", Color.accent(), Color.primary(), key.getName(), Color.accent(), key.get().toString()));
             MessageComponent desc = new MessageComponent(String.format("§7%s\n§m                \n%s%s", key.name().toLowerCase(Locale.ROOT), Color.primary(), key.getDescription()));
+            if(Enum.class.isAssignableFrom(key.getSettingType())) {
+                try {
+                    desc.getSiblings().add(new MessageComponent(WordUtils.wrap("\n\n" + Color.primary()
+                            + Beezig.api().translate("msg.enum.values", Color.accent() + Beezig.cfg().getEnumValues(key.getSettingType())),
+                            50,"\n" + Color.accent(), false)));
+                } catch (ReflectiveOperationException e) {
+                    Beezig.logger.error("Couldn't add values information", e);
+                }
+            }
             component.getStyle().setOnHover(new MessageAction(MessageAction.Action.SHOW_TEXT, desc));
             component.getStyle().setOnClick(new MessageAction(MessageAction.Action.SUGGEST_COMMAND, String.format("/bsettings %s ", key.name())));
             Beezig.api().messagePlayerComponent(component, false);

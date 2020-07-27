@@ -114,20 +114,24 @@ public class BeezigConfiguration {
             } catch (Exception e) {
                 e.printStackTrace();
                 if (!(e.getCause() instanceof IllegalArgumentException)) return null;
-                Object[] valuesRaw = (Object[]) cls.getMethod("values").invoke(null);
-                Method name = valuesRaw[0].getClass().getMethod("name");
-                String possibleValues = Stream.of(valuesRaw).map(o -> {
-                    try {
-                        return (String) name.invoke(o);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                        return null;
-                    }
-                }).collect(Collectors.joining(", "));
-                Message.error(Beezig.api().translate("error.enum", "§6" + possibleValues));
+
+                Message.error(Beezig.api().translate("error.enum", "§6" + getEnumValues(cls)));
             }
             return null;
         } else return cls.cast(value);
+    }
+
+    public String getEnumValues(Class settingClass) throws ReflectiveOperationException {
+        Object[] valuesRaw = (Object[]) settingClass.getMethod("values").invoke(null);
+        Method name = valuesRaw[0].getClass().getMethod("name");
+        return Stream.of(valuesRaw).map(o -> {
+            try {
+                return (String) name.invoke(o);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                return null;
+            }
+        }).collect(Collectors.joining(", "));
     }
 
     public void save() throws IOException {
