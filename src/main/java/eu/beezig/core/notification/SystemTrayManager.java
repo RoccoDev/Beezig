@@ -43,7 +43,8 @@ public class SystemTrayManager {
     public void sendNotification(IncomingMessage message) {
         Beezig.api().playSound("note.pling", 1f);
         if(!supported) return;
-        mainIcon.displayMessage(Beezig.api().translate("msg.notify.incoming", message.getSender()), message.getMessage(),
+        mainIcon.displayMessage(Beezig.api().translate(message.getType() == NotificationManager.MessageType.BROADCAST
+                        ? "msg.notify.incoming.broadcast" : "msg.notify.incoming", message.getSender()), message.getMessage(),
                 TrayIcon.MessageType.INFO);
     }
 }
