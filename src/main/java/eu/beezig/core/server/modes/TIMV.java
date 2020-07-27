@@ -137,19 +137,21 @@ public class TIMV extends HiveMode implements IAutovote, IMonthly {
             return stats;
         });
         getAdvancedRecords().setExecutor(this::recordsExecutor);
+        getAdvancedRecords().setSlowExecutor(this::slowRecordsExecutor);
         logger.setHeaders("Role", "Karma", "Map", "Role Points", "Innocent Points", "Detective Points",
                 "Traitor Points", "GameID", "Passed?", "Timestamp");
     }
 
     private void recordsExecutor() {
         List<Pair<String, String>> messages = getAdvancedRecords().getMessages();
+        List<Pair<String, String>> advanced = getAdvancedRecords().getAdvancedMessages();
         // Move "Karma" to the top
         Collections.swap(messages, 0, CollectionUtils.indexOf(messages, p -> "Karma".equals(p.getLeft())));
         int rolePts = Message.getNumberFromFormat(getAdvancedRecords().getMessage("Role Points")).intValue();
         int karma = Message.getNumberFromFormat(messages.get(0).getRight()).intValue();
         if(Settings.TIMV_ADVREC_KRR.get().getBoolean()) {
             double krr = karma / (double) rolePts;
-            messages.add(new ImmutablePair<>("Karma/Role Points", Message.ratio(krr)));
+            advanced.add(new ImmutablePair<>("Karma/Role Points", Message.ratio(krr)));
         }
         if(Settings.TIMV_ADVREC_TRATIO.get().getBoolean()) {
             int tIndex = CollectionUtils.indexOf(messages, p -> "Traitor Points".equals(p.getLeft()));
@@ -159,14 +161,20 @@ public class TIMV extends HiveMode implements IAutovote, IMonthly {
             messages.set(tIndex, new ImmutablePair<>("Traitor Points",
                     String.format("%s (%s%%%s)", rawPts, (ratio > 30 ? "§c" : "") + Message.ratio(ratio), Color.accent())));
         }
+    }
+
+    private void slowRecordsExecutor() {
+        List<Pair<String, String>> messages = getAdvancedRecords().getMessages();
+        List<Pair<String, String>> advanced = getAdvancedRecords().getAdvancedMessages();
+        int karma = Message.getNumberFromFormat(messages.get(0).getRight()).intValue();
         boolean record = Settings.TIMV_ADVREC_RECORD.get().getBoolean();
         if(AdvRecUtils.needsAPI() || record) {
             AdvRecUtils.announceAPI();
             try {
-                TimvStats api = Profiles.timv(getAdvancedRecords().getTarget()).get();
-                messages.set(0, new ImmutablePair<>("Karma",
+                TimvStats api = Profiles.timv(getAdvancedRecords().getTarget()).join();
+                getAdvancedRecords().setOrAddAdvanced(0, new ImmutablePair<>("Karma",
                         messages.get(0).getRight() + AdvRecUtils.getTitle(getTitleService(), api.getTitle(), karma)));
-                if(record) messages.add(new ImmutablePair<>("Karma Record", getAdvancedRecords().modifyValue((int) api.getMostPoints())));
+                if(record) advanced.add(new ImmutablePair<>("Karma Record", getAdvancedRecords().modifyValue((int) api.getMostPoints())));
             } catch (Exception e) {
                 e.printStackTrace();
             }

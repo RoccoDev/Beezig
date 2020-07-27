@@ -94,16 +94,20 @@ public class DR extends HiveMode implements IAutovote, IMonthly {
             return stats;
         });
         getAdvancedRecords().setExecutor(this::recordsExecutor);
+        getAdvancedRecords().setSlowExecutor(this::slowRecordsExecutor);
         logger.setHeaders("Points", "Map", "Kills", "Deaths", "GameID", "Timestamp", "Time");
     }
 
     private void recordsExecutor() {
         AdvRecUtils.addPvPStats(getAdvancedRecords());
+    }
+
+    private void slowRecordsExecutor() {
         int points = Message.getNumberFromFormat(getAdvancedRecords().getMessage("Points")).intValue();
         if (AdvRecUtils.needsAPI()) {
             AdvRecUtils.announceAPI();
             DrStats api = Profiles.dr(getAdvancedRecords().getTarget()).join();
-            getAdvancedRecords().getMessages().set(0, new ImmutablePair<>("Points",
+            getAdvancedRecords().setOrAddAdvanced(0, new ImmutablePair<>("Points",
                     getAdvancedRecords().getMessages().get(0).getRight() +
                             AdvRecUtils.getTitle(getTitleService(), api.getTitle(), points)));
         }

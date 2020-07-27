@@ -37,26 +37,26 @@ public class AdvRecUtils {
             int kills = Message.getNumberFromFormat(mgr.getMessage(killsKey)).intValue();
             int deaths = Message.getNumberFromFormat(mgr.getMessage(deathsKey)).intValue();
             double kd = deaths == 0 ? Double.POSITIVE_INFINITY : kills / (double) deaths;
-            mgr.getMessages().add(new ImmutablePair<>("K/D", Message.ratio(kd)));
+            mgr.getAdvancedMessages().add(new ImmutablePair<>("K/D", Message.ratio(kd)));
         }
         if(s(Settings.ADVREC_WINRATE)) {
             int victories = Message.getNumberFromFormat(mgr.getMessage("Victories")).intValue();
             int played = Message.getNumberFromFormat(mgr.getMessage("Games Played")).intValue();
             double wr = played == 0 ? 0 : victories * 100D / (double) played;
-            mgr.getMessages().add(new ImmutablePair<>("Win Rate", Message.ratio(wr) + "%"));
+            mgr.getAdvancedMessages().add(new ImmutablePair<>("Win Rate", Message.ratio(wr) + "%"));
         }
         if(s(Settings.ADVREC_KPG)) {
             int kills = Message.getNumberFromFormat(mgr.getMessage(killsKey)).intValue();
             int played = Message.getNumberFromFormat(mgr.getMessage("Games Played")).intValue();
             double kpg = played == 0 ? Double.POSITIVE_INFINITY : kills / (double) played;
-            mgr.getMessages().add(new ImmutablePair<>("Kills Per Game",
+            mgr.getAdvancedMessages().add(new ImmutablePair<>("Kills Per Game",
                     Message.ratio(kpg)));
         }
         if(s(Settings.ADVREC_PPG)) {
             int points = Message.getNumberFromFormat(mgr.getMessage("Points")).intValue();
             int played = Message.getNumberFromFormat(mgr.getMessage("Games Played")).intValue();
             double ppg = played == 0 ? Double.POSITIVE_INFINITY : points / (double) played;
-            mgr.getMessages().add(new ImmutablePair<>("Points Per Game",
+            mgr.getAdvancedMessages().add(new ImmutablePair<>("Points Per Game",
                     Message.ratio(ppg)));
         }
     }

@@ -20,8 +20,11 @@
 package eu.beezig.core.config;
 
 import eu.beezig.core.Beezig;
+import eu.beezig.core.server.HiveMode;
+import eu.beezig.core.server.ServerHive;
 import eu.beezig.core.util.Color;
 import eu.beezig.core.util.text.Message;
+import eu.the5zig.mod.server.GameMode;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -146,5 +149,11 @@ public class BeezigConfiguration {
 
     private void onSettingsChange(Settings key) {
         if(key == Settings.COLOR_ACCENT || key == Settings.COLOR_PRIMARY) Color.refreshCache();
+        if(key == Settings.ADVREC_MODE) {
+            if(ServerHive.isCurrent()) {
+                GameMode mode = Beezig.api().getActiveServer().getGameListener().getCurrentGameMode();
+                if(mode instanceof HiveMode) ((HiveMode) mode).getAdvancedRecords().refreshMode();
+            }
+        }
     }
 }

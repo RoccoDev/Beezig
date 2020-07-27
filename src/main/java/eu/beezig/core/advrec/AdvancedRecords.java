@@ -30,17 +30,21 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 public class AdvancedRecords {
     private List<Pair<String, String>> messages;
+    private List<Pair<String, String>> advancedMessages;
     private boolean listening = false;
     private Mode mode;
     private String target;
-    private Runnable executor;
+    private Callable<Void> executor;
+    private Callable<Void> slowExecutor;
 
     public AdvancedRecords() {
         messages = new LinkedList<>();
-        mode = (Mode) Settings.ADVREC_MODE.get().getValue();
+        advancedMessages = new LinkedList<>();
+        refreshMode();
     }
 
     public String getTarget() {
@@ -51,8 +55,22 @@ public class AdvancedRecords {
         return messages;
     }
 
+    public List<Pair<String, String>> getAdvancedMessages() {
+        return advancedMessages;
+    }
+
     public void setExecutor(Runnable executor) {
-        this.executor = executor;
+        this.executor = () -> {
+            executor.run();
+            return null;
+        };
+    }
+
+    public void setSlowExecutor(Runnable slowExecutor) {
+        this.slowExecutor = () -> {
+            slowExecutor.run();
+            return null;
+        };
     }
 
     /**
@@ -64,17 +82,17 @@ public class AdvancedRecords {
         if(!listening && "advrec.start".equals(key)) {
             listening = true;
             target = matches.get(0);
-            return mode == Mode.NORMAL;
+            return true;
         }
         else if(listening && "advrec.statistic".equals(key)) {
             messages.add(new ImmutablePair<>(matches.get(0), modifyValue(matches.get(1))));
-            return mode == Mode.NORMAL;
+            return true;
         }
-        else if(listening && "advrec.url".equals(key)) return mode == Mode.NORMAL;
+        else if(listening && "advrec.url".equals(key)) return true;
         else if(listening && "advrec.end".equals(key)) {
             listening = false;
             execute();
-            return mode == Mode.NORMAL;
+            return true;
         }
         return false;
     }
@@ -87,18 +105,51 @@ public class AdvancedRecords {
         return Settings.THOUSANDS_SEPARATOR.get().getBoolean() ? Message.formatNumber(old) : Integer.toString(old, 10);
     }
 
+    /**
+     * If mode is SECOND_CHAT, adds the message to the "Advanced" list. Otherwise it replaces one of the normal messages.
+     * @param index the normal message to replace
+     * @param message the new message
+     */
+    public void setOrAddAdvanced(int index, Pair<String, String> message) {
+        if(mode == Mode.SECOND_CHAT) advancedMessages.add(message);
+        else messages.set(index, message);
+    }
+
     private void execute() {
         Beezig.get().getAsyncExecutor().execute(() -> {
-            if(executor != null) executor.run();
-            sendMessages();
+            try {
+                if (executor != null) executor.call();
+                if (mode == Mode.SECOND_CHAT) sendMessages(false);
+                if (slowExecutor != null) slowExecutor.call();
+                if (mode == Mode.SECOND_CHAT) sendAdvanced();
+                else sendMessages(true);
+            } catch (Exception ex) {
+                Beezig.logger.error("Exception in advrec", ex);
+                Message.error(Message.translate("error.advrec"));
+            }
             messages.clear();
+            advancedMessages.clear();
         });
     }
 
-    private void sendMessages() {
-        sendMessage(StringUtils.linedCenterText(Color.primary(), Color.primary() + Beezig.api().translate("advrec.header", Color.accent() + target + Color.primary())));
-        messages.forEach(p -> sendMessage(formatMessage(p.getLeft(), p.getRight())));
-        sendMessage(String.format("                      %s§m                        §r                  ", Color.primary()));
+    private void sendAdvanced() {
+        if(mode == Mode.SECOND_CHAT) {
+            String header = StringUtils.linedCenterText(Color.primary(), Color.primary() + Beezig.api().translate("advrec.header", Color.accent() + target + Color.primary()));
+            String footer = String.format("                      %s§m                        §r                  ", Color.primary());
+            Beezig.api().messagePlayerInSecondChat(header);
+            advancedMessages.forEach(p -> sendMessage(formatMessage(p.getLeft(), p.getRight())));
+            Beezig.api().messagePlayerInSecondChat(footer);
+        }
+        else advancedMessages.forEach(p -> sendMessage(formatMessage(p.getLeft(), p.getRight())));
+    }
+
+    private void sendMessages(boolean includeAdvanced) {
+        String header = StringUtils.linedCenterText(Color.primary(), Color.primary() + Beezig.api().translate("advrec.header", Color.accent() + target + Color.primary()));
+        String footer = String.format("                      %s§m                        §r                  ", Color.primary());
+        Beezig.api().messagePlayer(header);
+        messages.forEach(p -> Beezig.api().messagePlayer(formatMessage(p.getLeft(), p.getRight())));
+        if(includeAdvanced) sendAdvanced();
+        Beezig.api().messagePlayer(footer);
     }
 
     private void sendMessage(String msg) {
@@ -113,6 +164,10 @@ public class AdvancedRecords {
     public String getMessage(String key) {
         Pair<String, String> pair = messages.stream().filter(p -> key.equals(p.getLeft())).findAny().orElse(null);
         return pair == null ? null : pair.getRight();
+    }
+
+    public void refreshMode() {
+        mode = (Mode) Settings.ADVREC_MODE.get().getValue();
     }
 
     public enum Mode {

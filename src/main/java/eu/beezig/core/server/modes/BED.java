@@ -92,6 +92,7 @@ public class BED extends HiveMode implements IAutovote, IMonthly {
             return stats;
         });
         getAdvancedRecords().setExecutor(this::recordsExecutor);
+        getAdvancedRecords().setSlowExecutor(this::slowRecordsExecutor);
         logger.setHeaders("Points", "Mode", "Map", "Kills", "Deaths", "Beds", "Victory?", "Timestamp", "GameID");
     }
 
@@ -102,13 +103,16 @@ public class BED extends HiveMode implements IAutovote, IMonthly {
 
     private void recordsExecutor() {
         AdvRecUtils.addPvPStats(getAdvancedRecords());
-        int points = Message.getNumberFromFormat(getAdvancedRecords().getMessage("Points")).intValue();
-        if(AdvRecUtils.needsAPI()) {
-            AdvRecUtils.announceAPI();
-            BedStats api = Profiles.bed(getAdvancedRecords().getTarget()).join();
-            getAdvancedRecords().getMessages().set(0, new ImmutablePair<>("Points",
-                    getAdvancedRecords().getMessages().get(0).getRight() + AdvRecUtils.getTitle(getTitleService(), api.getTitle(), points)));
-        }
+    }
+
+    private void slowRecordsExecutor() {
+            int points = Message.getNumberFromFormat(getAdvancedRecords().getMessage("Points")).intValue();
+            if (AdvRecUtils.needsAPI()) {
+                AdvRecUtils.announceAPI();
+                BedStats api = Profiles.bed(getAdvancedRecords().getTarget()).join();
+                getAdvancedRecords().setOrAddAdvanced(0, new ImmutablePair<>("Points",
+                        getAdvancedRecords().getMessages().get(0).getRight() + AdvRecUtils.getTitle(getTitleService(), api.getTitle(), points)));
+            }
     }
 
     @Override
