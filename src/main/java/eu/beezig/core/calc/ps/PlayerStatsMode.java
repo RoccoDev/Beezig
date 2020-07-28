@@ -72,9 +72,15 @@ public class PlayerStatsMode {
         Number value = null;
         JObject src = source.getSource();
         if("kd".equalsIgnoreCase(stat)) {
+            String apiKills = getApiKey("kills");
+            String apiDeaths = getApiKey("deaths");
+            if(src.getInput().get(apiKills) == null || src.getInput().get(apiDeaths) == null) return null;
             value = src.getLong(getApiKey("kills")) / (double) src.getLong(getApiKey("deaths"));
         }
         else if("wl".equalsIgnoreCase(stat)) {
+            String apiWins = getApiKey("victories");
+            String apiGames = getApiKey("played");
+            if(src.getInput().get(apiWins) == null || src.getInput().get(apiGames) == null) return null;
             value = src.getLong(getApiKey("victories")) * 100D / (double) src.getLong(getApiKey("played"));
         }
         if(value == null) {
