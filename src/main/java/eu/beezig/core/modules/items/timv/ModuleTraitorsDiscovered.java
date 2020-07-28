@@ -42,6 +42,6 @@ public class ModuleTraitorsDiscovered extends GameModeItem<TIMV> {
     @Override
     public boolean shouldRender(boolean dummy) {
         if(dummy) return true;
-        return super.shouldRender(false) && getGameMode().getRole() != null;
+        return super.shouldRender(false) && getGameMode() != null && getGameMode().getRole() != null;
     }
 }
