@@ -25,9 +25,9 @@ import eu.beezig.core.command.Command;
 import eu.beezig.core.util.text.Message;
 import org.apache.commons.lang3.SystemUtils;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.Channels;
@@ -72,8 +72,12 @@ public class BUpdateCommand implements Command {
                             (SystemUtils.IS_OS_MAC ? "Macintosh" : System.getProperty("os.name")),
                             Constants.VERSION, Beezig.getVersion()));
                     ReadableByteChannel byteChannel = Channels.newChannel(connection.getInputStream());
-                    FileChannel fileChannel = new FileOutputStream(
-                            new File(Beezig.class.getProtectionDomain().getCodeSource().getLocation().toURI())).getChannel();
+                    URL jarLocation = Beezig.class.getProtectionDomain().getCodeSource().getLocation();
+                    String jarFile = jarLocation.getFile();
+                    if (jarLocation.getProtocol().equals("jar")) {
+                        jarFile = jarFile.substring(0, jarFile.lastIndexOf("!"));
+                    }
+                    FileChannel fileChannel = new FileOutputStream(new URI(jarFile).getPath()).getChannel();
                     fileChannel.transferFrom(byteChannel, 0, Long.MAX_VALUE);
                     updated = true;
                     Message.info(Beezig.api().translate("update.success"));
