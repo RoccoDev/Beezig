@@ -23,6 +23,7 @@ import eu.beezig.core.Beezig;
 import eu.beezig.core.command.CommandManager;
 import eu.beezig.core.data.HiveTitle;
 import eu.beezig.core.net.BeezigNetManager;
+import eu.beezig.core.net.profile.OwnProfile;
 import eu.beezig.core.net.profile.UserProfile;
 import eu.beezig.core.server.HiveMode;
 import eu.beezig.core.server.ServerHive;
@@ -77,6 +78,15 @@ public class BeezigServiceLoader {
         mainService.registerNormalizeMapName(StringUtils::normalizeMapName);
         mainService.registerFormatNumber(Message::formatNumber);
         mainService.registerTranslate(Message::translate);
+        mainService.registerTranslateFormat(pair -> Beezig.api().translate(pair.getLeft(), pair.getRight()));
+        mainService.registerGetRegion(() -> {
+            BeezigNetManager net = Beezig.net();
+            if(net == null) return null;
+            OwnProfile profile = net.getProfile();
+            if(profile == null) return null;
+            if(profile.getRegion() == null) return null;
+            return profile.getRegion().getId();
+        });
         mainService.loadConfig(Beezig.get().getBeezigDir());
         mainService.addCommands(new ArrayList<>(CommandManager.commandExecutors));
     }
