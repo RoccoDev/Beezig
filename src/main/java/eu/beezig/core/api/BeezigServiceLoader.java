@@ -58,10 +58,10 @@ public class BeezigServiceLoader {
     private void registerCallbacks() {
         mainService.registerUserIndicator(uuid -> {
             BeezigNetManager mgr = Beezig.get().getNetworkManager();
-            if(mgr == null || mgr.getProfilesCache() == null) return 0;
+            if(mgr == null || mgr.getProfilesCache() == null) return -1;
             Optional<UserProfile> profile = Beezig.get().getNetworkManager().getProfilesCache().getIfPresent(uuid);
-            if(profile == null) return 0;
-            return profile.map(user -> user.getRole().getIndex() + 1).orElse(0);
+            if(profile == null) return -1;
+            return profile.map(user -> user.getRole().getIndex()).orElse(-1);
         });
         mainService.registerTitle(raw -> {
             if(!ServerHive.isCurrent()) return null;
