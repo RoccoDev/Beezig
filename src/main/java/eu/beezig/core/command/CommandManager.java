@@ -43,6 +43,7 @@ public class CommandManager {
         commandExecutors.add(new ToggleBeeCommand());
         commandExecutors.add(new ProfileCommand());
         commandExecutors.add(new BUpdateCommand());
+        commandExecutors.add(new BlockstatsCommand());
     }
 
     @EventHandler
