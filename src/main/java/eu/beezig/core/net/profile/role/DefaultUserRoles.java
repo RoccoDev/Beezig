@@ -29,6 +29,8 @@ public enum DefaultUserRoles implements UserRole {
     NONE(-1, "§r"),
     USER(0, "§7"),
     TRANSLATOR(50, "§6"),
+    CONTRIBUTOR(51, "§5"),
+    DAILY_WINNER(52, "§a"),
     DEVELOPER(100, "§b");
 
     private int index;
