@@ -95,8 +95,8 @@ public class GRAV extends HiveMode {
             currentStage++;
             return;
         }
-        Integer completions = stageCompletions.get(currentStage);
-        int place = completions == null ? 0 : completions - 1; // The "finished Stage #" message is sent before the "new stage" one
+        int place = stageCompletions.getOrDefault(currentStage, 1) - 1;
+        System.out.println("Place: " + place + " Awarding pts: " + Math.max(10, currentStage == 5 ? 70 - 12 * place : 20 - 2 * place));
         if(currentStage == 5) addPoints(Math.max(10, 70 - 12 * place));
         else addPoints(Math.max(10, 20 - 2 * place));
         currentStage++;

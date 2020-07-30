@@ -35,7 +35,7 @@ public class ModuleSession extends GameModeItem<HiveMode> {
     @Override
     protected Object getValue(boolean b) {
         if(b) return "123 Points in 3h";
-        String pts = String.format("%s %s", getGameMode().getSessionService().getPoints(),
+        String pts = String.format("%s %s", Message.formatNumber(getGameMode().getSessionService().getPoints()),
                 getGameMode() instanceof TIMV ? "Karma" : Message.translate("modules.item.hive_points"));
         long duration = System.currentTimeMillis() - Beezig.get().getTemporaryPointsManager().getCurrentSession().getSessionStart();
         String dateFmt = duration >= 1000 * 60 * 60 ? "H'h' m'min'" : "m'min'";

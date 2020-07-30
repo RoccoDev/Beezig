@@ -33,7 +33,7 @@ public class ModuleDaily extends GameModeItem<HiveMode> {
     @Override
     protected Object getValue(boolean b) {
         if(b) return "123 Points";
-        return String.format("%s %s", getGameMode().getDailyService().getPoints(),
+        return String.format("%s %s", Message.formatNumber(getGameMode().getDailyService().getPoints()),
                 getGameMode() instanceof TIMV ? "Karma" : Message.translate("modules.item.hive_points"));
     }
 
