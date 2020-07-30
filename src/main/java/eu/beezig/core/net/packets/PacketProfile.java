@@ -7,14 +7,13 @@ import eu.beezig.core.net.Packet;
 import eu.beezig.core.net.Protocol;
 import eu.beezig.core.net.handler.Connection;
 import eu.beezig.core.net.profile.OwnProfile;
-import eu.beezig.core.net.profile.UserRole;
 import eu.beezig.core.net.util.PacketBuffer;
 
 public class PacketProfile implements Packet {
 
     // In
     private int id;
-    private UserRole role;
+    private byte role;
     private long firstLogin;
     private String regionId;
     private String regionName;
@@ -31,7 +30,7 @@ public class PacketProfile implements Packet {
     @Override
     public void read(PacketBuffer buffer) {
         id = buffer.readInt();
-        role = UserRole.fromIndex(buffer.readByte());
+        role = buffer.readByte();
         firstLogin = buffer.readLong();
         boolean regionOk = buffer.readBoolean();
         if(regionOk) {

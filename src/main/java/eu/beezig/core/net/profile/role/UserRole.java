@@ -17,29 +17,16 @@
  * along with Beezig.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package eu.beezig.core.net.profile;
+package eu.beezig.core.net.profile.role;
 
-import eu.beezig.core.net.profile.role.DefaultUserRoles;
-import eu.beezig.core.net.profile.role.RoleService;
-import eu.beezig.core.net.profile.role.UserRole;
+import eu.the5zig.mod.util.component.MessageComponent;
 
-import java.util.UUID;
-
-public class UserProfile {
-    private UUID uuid;
-    private UserRole role;
-
-    public UserProfile(UUID uuid, int role) {
-        this.uuid = uuid;
-        this.role = DefaultUserRoles.USER;
-        RoleService.getRole(role).thenAcceptAsync(r -> this.role = r);
-    }
-
-    public UUID getUuid() {
-        return uuid;
-    }
-
-    public UserRole getRole() {
-        return role;
+public interface UserRole {
+    int getIndex();
+    MessageComponent getDisplayComponent();
+    String getShortName();
+    String getDisplayName();
+    default int compareTo(UserRole other) {
+        return getIndex() - other.getIndex();
     }
 }

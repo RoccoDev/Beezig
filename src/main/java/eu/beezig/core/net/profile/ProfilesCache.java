@@ -24,6 +24,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.collect.Sets;
 import eu.beezig.core.Beezig;
 import eu.beezig.core.net.packets.PacketOnlineUsers;
+import eu.beezig.core.net.profile.role.DefaultUserRoles;
 import eu.the5zig.mod.util.NetworkPlayerInfo;
 
 import java.util.*;
@@ -56,7 +57,7 @@ public class ProfilesCache {
     }
 
     public void update(UUID id, int role) {
-        if(role == UserRole.NONE.getIndex()) profilesCache.put(id, Optional.empty());
+        if(role == DefaultUserRoles.NONE.getIndex()) profilesCache.put(id, Optional.empty());
         else profilesCache.put(id, Optional.of(new UserProfile(id, role)));
     }
 

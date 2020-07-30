@@ -2,7 +2,7 @@ package eu.beezig.core.net.packets;
 
 import eu.beezig.core.net.Packet;
 import eu.beezig.core.net.handler.Connection;
-import eu.beezig.core.net.profile.UserRole;
+import eu.beezig.core.net.profile.role.UserRole;
 import eu.beezig.core.net.util.PacketBuffer;
 import eu.beezig.core.util.task.WorldTask;
 import eu.beezig.core.util.text.Message;

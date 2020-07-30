@@ -22,7 +22,8 @@ package eu.beezig.core.command.commands;
 import eu.beezig.core.Beezig;
 import eu.beezig.core.command.Command;
 import eu.beezig.core.net.packets.PacketUserSettings;
-import eu.beezig.core.net.profile.UserRole;
+import eu.beezig.core.net.profile.role.DefaultUserRoles;
+import eu.beezig.core.net.profile.role.UserRole;
 import eu.beezig.core.util.Color;
 import eu.beezig.core.util.text.Message;
 
@@ -46,7 +47,7 @@ public class ToggleBeeCommand implements Command {
 
     @Override
     public boolean execute(String[] args) {
-        if(Beezig.net().getProfile() == null || Beezig.net().getProfile().getRole().compareTo(UserRole.USER) < 1) return false;
+        if(Beezig.net().getProfile() == null || Beezig.net().getProfile().getRole().compareTo(DefaultUserRoles.USER) < 1) return false;
         UserRole current = Beezig.net().getProfile().getRole();
         long now = System.currentTimeMillis();
         if(now - lastSettingTime < 5000) {
@@ -56,8 +57,8 @@ public class ToggleBeeCommand implements Command {
         if (args.length == 0) {
             UserRole changed = current;
             if(!isFakeRole) {
-                if(current == UserRole.DEVELOPER) changed = UserRole.NONE;
-                else changed = UserRole.USER;
+                if(current == DefaultUserRoles.DEVELOPER) changed = DefaultUserRoles.NONE;
+                else changed = DefaultUserRoles.USER;
             }
             Beezig.net().getHandler().sendPacket(new PacketUserSettings(changed));
             Message.info(Beezig.api().translate("msg.rank.toggle", changed.getDisplayName() + Color.primary()));
@@ -66,17 +67,17 @@ public class ToggleBeeCommand implements Command {
             return true;
         }
         String newName = args[0];
-        UserRole role;
+        DefaultUserRoles role;
         try {
-            role = UserRole.valueOf(newName.toUpperCase(Locale.ROOT));
+            role = DefaultUserRoles.valueOf(newName.toUpperCase(Locale.ROOT));
         }
         catch (IllegalArgumentException ex) {
-            String possibleValues = Stream.of(UserRole.values()).map(UserRole::name).collect(Collectors.joining(", "));
+            String possibleValues = Stream.of(DefaultUserRoles.values()).map(DefaultUserRoles::name).collect(Collectors.joining(", "));
             Message.error(Beezig.api().translate("error.enum", "§6" + possibleValues));
             return true;
         }
-        if(role == UserRole.NONE && current.compareTo(UserRole.DEVELOPER) < 0) {
-            Message.error(Beezig.api().translate("error.rank.perm", UserRole.DEVELOPER.getDisplayName() + "§c"));
+        if(role == DefaultUserRoles.NONE && current.compareTo(DefaultUserRoles.DEVELOPER) < 0) {
+            Message.error(Beezig.api().translate("error.rank.perm", DefaultUserRoles.DEVELOPER.getDisplayName() + "§c"));
             return true;
         }
         if(current.compareTo(role) < 0) {
