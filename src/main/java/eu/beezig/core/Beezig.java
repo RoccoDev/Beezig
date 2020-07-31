@@ -38,6 +38,7 @@ import eu.beezig.core.util.snipe.AntiSniper;
 import eu.beezig.core.util.task.WorldTaskManager;
 import eu.beezig.core.util.text.LinkSnipper;
 import eu.beezig.core.util.text.Message;
+import eu.beezig.core.util.text.PartyMembers;
 import eu.beezig.hiveapi.wrapper.HiveWrapper;
 import eu.the5zig.mod.ModAPI;
 import eu.the5zig.mod.The5zigAPI;
@@ -117,6 +118,7 @@ public class Beezig {
         asyncExecutor = Executors.newScheduledThreadPool(10);
         worldTaskManager = new WorldTaskManager();
         api.getPluginManager().registerListener(this, worldTaskManager);
+        api.getPluginManager().registerListener(this, new PartyMembers());
         HiveWrapper.setAsyncExecutor(asyncExecutor);
         HiveWrapper.setUserAgent(Message.getUserAgent());
 

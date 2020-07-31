@@ -71,7 +71,9 @@ public enum Settings {
     AUTOGL(false),
     AUTOGL_MESSAGE("gl & hf"),
     AUTOGL_DELAY(0L),
-    RECORD_DND(false);
+    RECORD_DND(false),
+    CHAT_PARTY(true),
+    CHAT_FRIENDS(true);
 
     private final Object defaultValue;
     private final Class settingType;
