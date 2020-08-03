@@ -96,6 +96,7 @@ public class DR extends HiveMode implements IAutovote, IMonthly {
         getAdvancedRecords().setExecutor(this::recordsExecutor);
         getAdvancedRecords().setSlowExecutor(this::slowRecordsExecutor);
         logger.setHeaders("Points", "Map", "Kills", "Deaths", "GameID", "Timestamp", "Time");
+        setGameID(Long.toString(System.currentTimeMillis(), 10));
     }
 
     private void recordsExecutor() {
