@@ -19,6 +19,7 @@
 
 package eu.beezig.core.data;
 
+import com.google.common.reflect.TypeToken;
 import eu.beezig.core.Beezig;
 import eu.beezig.core.automessage.AutoGGManager;
 import eu.beezig.core.automessage.AutoGLManager;
@@ -37,6 +38,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -92,6 +94,13 @@ public class BeezigData {
         String json = FileUtils.readToString(f);
         T[] arr = Beezig.gson.fromJson(json, marker);
         return Arrays.asList(arr);
+    }
+
+    public <T> Map<String, T> getDataMap(DataPath path, TypeToken marker) throws IOException {
+        File f = new File(dataFolder, "hive-data-master/" + path.getPath());
+        if(!f.exists()) return null;
+        String json = FileUtils.readToString(f);
+        return Beezig.gson.fromJson(json, marker.getType());
     }
 
     public void tryUpdate() throws Exception {

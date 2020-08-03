@@ -23,6 +23,7 @@ import eu.beezig.core.Beezig;
 import eu.beezig.core.modules.items.*;
 import eu.beezig.core.modules.items.bed.ModuleResources;
 import eu.beezig.core.modules.items.bed.ModuleSummoners;
+import eu.beezig.core.modules.items.dr.ModulePersonalBest;
 import eu.beezig.core.modules.items.timv.ModuleGameKarma;
 import eu.beezig.core.modules.items.timv.ModuleTraitorsDiscovered;
 import eu.beezig.core.server.ServerHive;
@@ -53,6 +54,9 @@ public class Modules {
         // Bedwars
         api.registerModuleItem(plugin, "bed_resources", ModuleResources.class, HIVE);
         api.registerModuleItem(plugin, "bed_summoners", ModuleSummoners.class, HIVE);
+
+        // Deathrun
+        api.registerModuleItem(plugin, "dr_pb", ModulePersonalBest.class, HIVE);
     }
 
     public static boolean render() {

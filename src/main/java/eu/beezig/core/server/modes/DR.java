@@ -19,8 +19,10 @@
 
 package eu.beezig.core.server.modes;
 
+import com.google.common.reflect.TypeToken;
 import eu.beezig.core.Beezig;
 import eu.beezig.core.advrec.AdvRecUtils;
+import eu.beezig.core.data.DataPath;
 import eu.beezig.core.logging.session.SessionItem;
 import eu.beezig.core.server.HiveMode;
 import eu.beezig.core.server.IAutovote;
@@ -29,17 +31,30 @@ import eu.beezig.core.server.monthly.MonthlyField;
 import eu.beezig.core.server.monthly.MonthlyService;
 import eu.beezig.core.util.UUIDUtils;
 import eu.beezig.core.util.text.Message;
+import eu.beezig.core.util.text.StringUtils;
 import eu.beezig.hiveapi.wrapper.player.Profiles;
 import eu.beezig.hiveapi.wrapper.player.games.DrStats;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public class DR extends HiveMode implements IAutovote, IMonthly {
 
+    private Map<String, MapData> maps;
+    private MapData currentMapData;
     private int lastSbPoints;
     private int lastSbKills;
     private String time;
+    /**
+     * Cached profile, used to load personal bests
+     */
+    private DrStats profile;
+
+    // Personal Best
+    private long pbSecs;
+    private String pb;
 
     public String getEndTime() {
         return time;
@@ -47,6 +62,19 @@ public class DR extends HiveMode implements IAutovote, IMonthly {
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+    public void initMapData() {
+        try {
+            maps = Beezig.get().getData().getDataMap(DataPath.DR_MAPS, new TypeToken<Map<String, MapData>>() {});
+            if(maps == null) {
+                Message.error("error.data_read");
+                Beezig.logger.error("Tried to fetch maps but file wasn't found.");
+            }
+        } catch (Exception e) {
+            Message.error("error.data_read");
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -69,10 +97,30 @@ public class DR extends HiveMode implements IAutovote, IMonthly {
         return true;
     }
 
+    @Override
+    public void setMap(String map) {
+        super.setMap(map);
+        String normalized = StringUtils.normalizeMapName(map);
+        MapData data = maps.get(normalized);
+        if(data == null) {
+            Message.error("error.map_not_found");
+            return;
+        }
+        currentMapData = data;
+        if(profile != null) {
+            Long record = profile.getMapRecords().get(currentMapData.hive);
+            if(record != null) {
+                pbSecs = record;
+                pb = DurationFormatUtils.formatDuration(pbSecs * 1000, "m:ss");
+            }
+        }
+    }
+
     public DR ()
     {
         statsFetcher.setApiComputer(name -> {
             DrStats api = Profiles.dr(name).join();
+            profile = api;
             GlobalStats stats = new GlobalStats();
             stats.setPoints((int) api.getPoints());
             stats.setKills((int) api.getKills());
@@ -90,7 +138,10 @@ public class DR extends HiveMode implements IAutovote, IMonthly {
             stats.setDeaths(lines.get("Deaths"));
             stats.setVictories(lines.get("Victories"));
             Profiles.dr(UUIDUtils.strip(Beezig.user().getId()))
-                    .thenAccept(api -> stats.setTitle(getTitleService().getTitle(api.getTitle())));
+                    .thenAcceptAsync(api -> {
+                        profile = api;
+                        stats.setTitle(getTitleService().getTitle(api.getTitle()));
+                    });
             return stats;
         });
         getAdvancedRecords().setExecutor(this::recordsExecutor);
@@ -141,5 +192,14 @@ public class DR extends HiveMode implements IAutovote, IMonthly {
     public CompletableFuture<? extends MonthlyService> loadProfile() {
         return new DrStats(null).getMonthlyProfile(UUIDUtils.strip(Beezig.user().getId()))
                 .thenApplyAsync(m -> new MonthlyService(m, MonthlyField.KILLS, MonthlyField.DEATHS, MonthlyField.KD));
+    }
+
+    public String getPersonalBest() {
+        return pb;
+    }
+
+    private static class MapData {
+        public String speedrun, hive;
+        public int checkpoints;
     }
 }

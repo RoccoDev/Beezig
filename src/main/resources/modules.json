@@ -57,6 +57,9 @@
         },
         {
           "type": "hive_monthly"
+        },
+        {
+          "type": "dr_pb"
         }
       ]
     }
