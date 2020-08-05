@@ -105,7 +105,10 @@ public class ProfilesCache {
     }
 
     public Optional<UserProfile> getIfPresent(UUID id) {
-        return profilesCache.getIfPresent(id);
+        Optional<UserProfile> ret = profilesCache.getIfPresent(id);
+        if (ret == null)
+            cachedPlayers.remove(id);
+        return ret;
     }
 
     private void updateUnconditionally(Collection<UUID> ids) {
