@@ -27,6 +27,10 @@ import eu.the5zig.util.minecraft.ChatColor;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -43,9 +47,11 @@ public class StatsFetcher {
     private Function<String, HiveMode.GlobalStats> apiComputer;
     private Function<HashMap<String, Integer>, HiveMode.GlobalStats> scoreboardComputer;
     private long firstCheck = -1, timeout = 2000L;
+    private AtomicBoolean started;
 
     StatsFetcher(Class<? extends HiveMode> mode) {
         gamemode = mode;
+        started = new AtomicBoolean(false);
         job = new CompletableFuture<>();
     }
 
@@ -61,14 +67,15 @@ public class StatsFetcher {
         this.timeout = timeout;
     }
 
-    public CompletableFuture<HiveMode.GlobalStats> getJob() {
+    CompletableFuture<HiveMode.GlobalStats> getJob() {
         return job;
     }
 
     void attemptCompute(HiveMode mode, Scoreboard board) {
-        if(job.isDone()) return;
+        if(started.get()) return;
         if(!gamemode.isAssignableFrom(mode.getClass())) return;
         if(board != null && Pattern.matches("HiveMC", ChatColor.stripColor(board.getTitle()).trim())) {
+            started.compareAndSet(false, true);
             Beezig.logger.debug("Found matching scoreboard using title backend");
             HashMap<String, Integer> normalized = board.getLines().entrySet().stream()
                     .map(e -> {
@@ -84,8 +91,11 @@ public class StatsFetcher {
                 return;
             }
             if(System.currentTimeMillis() - firstCheck >= timeout) {
+                started.compareAndSet(false, true);
                 Beezig.logger.debug("Scoreboard not found and timeout reached, querying API");
-                Beezig.get().getAsyncExecutor().execute(() -> job.complete(apiComputer.apply(UUIDUtils.strip(Beezig.user().getId()))));
+                ScheduledExecutorService executor = Beezig.get().getAsyncExecutor();
+                executor.execute(() -> job.complete(apiComputer.apply(UUIDUtils.strip(Beezig.user().getId()))));
+                executor.schedule(() -> job.completeExceptionally(new TimeoutException("API Timeout")), 5000, TimeUnit.MILLISECONDS);
             }
         }
     }
