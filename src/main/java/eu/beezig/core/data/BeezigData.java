@@ -23,6 +23,7 @@ import com.google.common.reflect.TypeToken;
 import eu.beezig.core.Beezig;
 import eu.beezig.core.automessage.AutoGGManager;
 import eu.beezig.core.automessage.AutoGLManager;
+import eu.beezig.core.automessage.AutoNewGameManager;
 import eu.beezig.core.data.timv.TestMessagesManager;
 import eu.beezig.core.util.FileUtils;
 import eu.beezig.core.util.text.Message;
@@ -53,6 +54,7 @@ public class BeezigData {
     private TestMessagesManager customTestMessages;
     private AutoGGManager autoGGManager;
     private AutoGLManager autoGLManager;
+    private AutoNewGameManager autoNewGameManager;
 
     public BeezigData(File beezigDir) {
         this.dataFolder = new File(beezigDir, "data");
@@ -63,6 +65,8 @@ public class BeezigData {
         Beezig.api().getPluginManager().registerListener(Beezig.get(), autoGGManager);
         this.autoGLManager = new AutoGLManager();
         Beezig.api().getPluginManager().registerListener(Beezig.get(), autoGLManager);
+        this.autoNewGameManager = new AutoNewGameManager();
+        Beezig.api().getPluginManager().registerListener(Beezig.get(), autoNewGameManager);
     }
 
     public GameTitles getTitleManager() {
@@ -79,6 +83,10 @@ public class BeezigData {
 
     public AutoGLManager getAutoGLManager() {
         return autoGLManager;
+    }
+
+    public AutoNewGameManager getAutoNewGameManager() {
+        return autoNewGameManager;
     }
 
     public <T> T getData(DataPath path, Class<T> marker) throws IOException {

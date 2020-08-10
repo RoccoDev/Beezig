@@ -117,6 +117,7 @@ public class ServerHive extends ServerInstance {
             Beezig.get().getTemporaryPointsManager().startSession();
         Beezig.get().getData().getAutoGGManager().initTriggers();
         Beezig.get().getData().getAutoGLManager().initTriggers();
+        Beezig.get().getData().getAutoNewGameManager().initTriggers();
         if(BeezigForge.isSupported()) BeezigForge.get().setOnHive(true);
     }
 

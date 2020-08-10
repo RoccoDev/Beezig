@@ -19,33 +19,40 @@
 
 package eu.beezig.core.automessage;
 
+import eu.beezig.core.Beezig;
 import eu.beezig.core.config.Setting;
 import eu.beezig.core.config.Settings;
 import eu.beezig.core.data.DataPath;
+import eu.beezig.core.server.ServerHive;
 
-public class AutoGGManager extends AutoMessageManager{
+public class AutoNewGameManager extends AutoMessageManager{
 
-    public AutoGGManager() {
-        super(true);
+    public AutoNewGameManager() {
+        super(false);
     }
 
     @Override
     public Setting getEnabledSetting() {
-        return Settings.AUTOGG.get();
+        return Settings.AUTONEWGAME.get();
     }
 
     @Override
     public String getMessage() {
-        return Settings.AUTOGG_MESSAGE.get().getString();
+        return "/newgame";
     }
 
     @Override
     public Setting getDelaySetting() {
-        return Settings.AUTOGG_DELAY.get();
+        return Settings.AUTONEWGAME_DELAY.get();
     }
 
     @Override
     public DataPath getTriggersPath() {
-        return DataPath.AUTOGG_TRIGGERS;
+        return DataPath.AUTONEWGAME_TRIGGERS;
+    }
+
+    @Override
+    public boolean shouldFire() {
+        return !((ServerHive) Beezig.api().getActiveServer()).getInParty() || Settings.AUTONEWGAME_IN_PARTIES.get().getBoolean();
     }
 }

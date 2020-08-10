@@ -23,7 +23,8 @@ public enum DataPath {
     TIMV_MAPS("timv/maps.json"),
     DR_MAPS("dr/maps.json"),
     AUTOGG_TRIGGERS("autogg-triggers.json"),
-    AUTOGL_TRIGGERS("autogl-triggers.json");
+    AUTOGL_TRIGGERS("autogl-triggers.json"),
+    AUTONEWGAME_TRIGGERS("autonewgame-triggers.json");
 
     private final String path;
 

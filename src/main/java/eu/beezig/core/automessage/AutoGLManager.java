@@ -24,14 +24,19 @@ import eu.beezig.core.config.Settings;
 import eu.beezig.core.data.DataPath;
 
 public class AutoGLManager extends AutoMessageManager {
+
+    public AutoGLManager() {
+        super(true);
+    }
+
     @Override
     public Setting getEnabledSetting() {
         return Settings.AUTOGL.get();
     }
 
     @Override
-    public Setting getMessageSetting() {
-        return Settings.AUTOGL_MESSAGE.get();
+    public String getMessage() {
+        return Settings.AUTOGL_MESSAGE.get().getString();
     }
 
     @Override

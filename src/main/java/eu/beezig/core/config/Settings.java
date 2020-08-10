@@ -71,6 +71,9 @@ public enum Settings {
     AUTOGL(false),
     AUTOGL_MESSAGE("gl & hf"),
     AUTOGL_DELAY(0L),
+    AUTONEWGAME(false),
+    AUTONEWGAME_DELAY(500L),
+    AUTONEWGAME_IN_PARTIES(false),
     RECORD_DND(false),
     CHAT_PARTY(true),
     CHAT_FRIENDS(true);
