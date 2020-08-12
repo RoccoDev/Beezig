@@ -29,16 +29,17 @@ import eu.beezig.core.server.monthly.MonthlyService;
 import eu.beezig.core.util.UUIDUtils;
 import eu.beezig.core.util.text.Message;
 import eu.beezig.hiveapi.wrapper.player.Profiles;
-import eu.beezig.hiveapi.wrapper.player.games.BpStats;
+import eu.beezig.hiveapi.wrapper.player.games.arcade.SpStats;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import java.util.concurrent.CompletableFuture;
 
-public class BP extends HiveMode implements IMonthly {
+public class SP extends HiveMode implements IMonthly {
+    private boolean won;
 
-    public BP() {
+    public SP() {
         statsFetcher.setApiComputer(name -> {
-            BpStats api = Profiles.bp(name).join();
+            SpStats api = Profiles.sp(name).join();
             GlobalStats stats = new GlobalStats();
             stats.setPoints((int) api.getPoints());
             stats.setPlayed((int) api.getGamesPlayed());
@@ -51,14 +52,27 @@ public class BP extends HiveMode implements IMonthly {
             stats.setPoints(lines.get("Points"));
             stats.setPlayed(lines.get("Games Played"));
             stats.setVictories(lines.get("Victories"));
-            Profiles.bp(UUIDUtils.strip(Beezig.user().getId()))
+            Profiles.sp(UUIDUtils.strip(Beezig.user().getId()))
                 .thenAcceptAsync(api -> stats.setTitle(getTitleService().getTitle(api.getTitle())));
             return stats;
         });
         getAdvancedRecords().setExecutor(this::recordsExecutor);
         getAdvancedRecords().setSlowExecutor(this::slowRecordsExecutor);
-        logger.setHeaders("Points", "Timestamp");
+        logger.setHeaders("Points", "Map", "Victory?", "Timestamp");
         setGameID(Long.toString(System.currentTimeMillis(), 10));
+    }
+
+    public void setWon() {
+        this.won = true;
+    }
+
+    @Override
+    public void end() {
+        super.end();
+        logger.log(getPoints(), getMap(), won, System.currentTimeMillis());
+        if(getSessionService() != null)
+            Beezig.get().getTemporaryPointsManager().getCurrentSession().pushItem(new SessionItem.Builder(getIdentifier())
+                .points(getPoints()).map(getMap()).victory(won).gameStart(gameStart).build());
     }
 
     private void recordsExecutor() {
@@ -74,7 +88,7 @@ public class BP extends HiveMode implements IMonthly {
         int points = Message.getNumberFromFormat(getAdvancedRecords().getMessage("Points")).intValue();
         if (AdvRecUtils.needsAPI()) {
             AdvRecUtils.announceAPI();
-            BpStats api = Profiles.bp(getAdvancedRecords().getTarget()).join();
+            SpStats api = Profiles.sp(getAdvancedRecords().getTarget()).join();
             getAdvancedRecords().setOrAddAdvanced(0, new ImmutablePair<>("Points",
                 getAdvancedRecords().getMessages().get(0).getRight() +
                     AdvRecUtils.getTitle(getTitleService(), api.getTitle(), points)));
@@ -82,27 +96,18 @@ public class BP extends HiveMode implements IMonthly {
     }
 
     @Override
-    public void end() {
-        super.end();
-        logger.log(getPoints(), System.currentTimeMillis());
-        if(getSessionService() != null)
-            Beezig.get().getTemporaryPointsManager().getCurrentSession().pushItem(new SessionItem.Builder(getIdentifier())
-                .points(getPoints()).gameStart(gameStart).build());
-    }
-
-    @Override
     public String getIdentifier() {
-        return "bp";
+        return "sp";
     }
 
     @Override
     public String getName() {
-        return "BlockParty";
+        return "Splegg";
     }
 
     @Override
     public CompletableFuture<? extends MonthlyService> loadProfile() {
-        return new BpStats(null).getMonthlyProfile(UUIDUtils.strip(Beezig.user().getId()))
+        return new SpStats(null).getMonthlyProfile(UUIDUtils.strip(Beezig.user().getId()))
             .thenApplyAsync(MonthlyService::new);
     }
 }

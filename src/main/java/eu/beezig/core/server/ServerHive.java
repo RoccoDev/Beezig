@@ -91,6 +91,7 @@ public class ServerHive extends ServerInstance {
         registry.registerListener(new SHUListener());
         registry.registerListener(new GRAVListener());
         registry.registerListener(new BPListener());
+        registry.registerListener(new SPListener());
     }
 
     @Override
@@ -199,7 +200,8 @@ public class ServerHive extends ServerInstance {
         @Override
         public void onServerConnect(GameMode gameMode) {
             if(gameMode instanceof HiveMode) {
-                if(gameMode.getState() != GameState.LOBBY) ((HiveMode)gameMode).end();
+                HiveMode hive = (HiveMode) gameMode;
+                if(hive.getGameID() != null) hive.end();
             }
             if(readyForLobby) {
                 readyForLobby = false;
@@ -211,8 +213,9 @@ public class ServerHive extends ServerInstance {
 
         @Override
         public void onServerDisconnect(GameMode gameMode) {
-            if(gameMode instanceof HiveMode && gameMode.getState() != GameState.LOBBY) {
-                ((HiveMode)gameMode).end();
+            if(gameMode instanceof HiveMode) {
+                HiveMode hive = (HiveMode) gameMode;
+                if(hive.getGameID() != null) hive.end();
             }
             if(Beezig.get().getTemporaryPointsManager() != null)
                 Beezig.get().getTemporaryPointsManager().endSession();
