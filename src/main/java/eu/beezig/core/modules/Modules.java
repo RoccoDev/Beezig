@@ -24,6 +24,7 @@ import eu.beezig.core.modules.items.*;
 import eu.beezig.core.modules.items.bed.ModuleResources;
 import eu.beezig.core.modules.items.bed.ModuleSummoners;
 import eu.beezig.core.modules.items.dr.ModulePersonalBest;
+import eu.beezig.core.modules.items.dr.ModuleWorldRecord;
 import eu.beezig.core.modules.items.timv.ModuleGameKarma;
 import eu.beezig.core.modules.items.timv.ModuleTraitorsDiscovered;
 import eu.beezig.core.server.ServerHive;
@@ -57,6 +58,7 @@ public class Modules {
 
         // Deathrun
         api.registerModuleItem(plugin, "dr_pb", ModulePersonalBest.class, HIVE);
+        api.registerModuleItem(plugin, "dr_wr", ModuleWorldRecord.class, HIVE);
     }
 
     public static boolean render() {

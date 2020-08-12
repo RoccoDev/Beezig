@@ -30,6 +30,7 @@ import eu.beezig.core.server.monthly.IMonthly;
 import eu.beezig.core.server.monthly.MonthlyField;
 import eu.beezig.core.server.monthly.MonthlyService;
 import eu.beezig.core.util.UUIDUtils;
+import eu.beezig.core.util.speedrun.WorldRecords;
 import eu.beezig.core.util.text.Message;
 import eu.beezig.core.util.text.StringUtils;
 import eu.beezig.hiveapi.wrapper.player.Profiles;
@@ -55,6 +56,7 @@ public class DR extends HiveMode implements IAutovote, IMonthly {
     // Personal Best
     private long pbSecs;
     private String pb;
+    private WorldRecords.WorldRecord wr;
 
     public String getEndTime() {
         return time;
@@ -114,6 +116,11 @@ public class DR extends HiveMode implements IAutovote, IMonthly {
                 pb = DurationFormatUtils.formatDuration(pbSecs * 1000, "m:ss");
             }
         }
+        WorldRecords.getRecord(currentMapData).thenAcceptAsync(record -> wr = record)
+            .exceptionally(e -> {
+                Message.error("error.map_not_found");
+                return null;
+            });
     }
 
     public DR ()
@@ -148,6 +155,10 @@ public class DR extends HiveMode implements IAutovote, IMonthly {
         getAdvancedRecords().setSlowExecutor(this::slowRecordsExecutor);
         logger.setHeaders("Points", "Map", "Kills", "Deaths", "GameID", "Timestamp", "Time");
         setGameID(Long.toString(System.currentTimeMillis(), 10));
+    }
+
+    public WorldRecords.WorldRecord getWorldRecord() {
+        return wr;
     }
 
     private void recordsExecutor() {
@@ -198,7 +209,7 @@ public class DR extends HiveMode implements IAutovote, IMonthly {
         return pb;
     }
 
-    private static class MapData {
+    public static class MapData {
         public String speedrun, hive;
         public int checkpoints;
     }
