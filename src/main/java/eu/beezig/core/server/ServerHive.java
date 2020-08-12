@@ -90,6 +90,7 @@ public class ServerHive extends ServerInstance {
         registry.registerListener(new DRListener());
         registry.registerListener(new SHUListener());
         registry.registerListener(new GRAVListener());
+        registry.registerListener(new BPListener());
     }
 
     @Override
