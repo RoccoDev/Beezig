@@ -24,6 +24,8 @@ import eu.beezig.core.advrec.AdvRecUtils;
 import eu.beezig.core.config.Settings;
 import eu.beezig.core.logging.session.SessionItem;
 import eu.beezig.core.server.HiveMode;
+import eu.beezig.core.server.monthly.IMonthly;
+import eu.beezig.core.server.monthly.MonthlyService;
 import eu.beezig.core.util.UUIDUtils;
 import eu.beezig.core.util.text.Message;
 import eu.beezig.hiveapi.wrapper.player.Profiles;
@@ -32,8 +34,9 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
-public class GRAV extends HiveMode {
+public class GRAV extends HiveMode implements IMonthly {
 
     private boolean won;
     // Keeps tracked of the other players' stage completions, to assign points based on the place
@@ -123,5 +126,11 @@ public class GRAV extends HiveMode {
     @Override
     public String getName() {
         return "Gravity";
+    }
+
+    @Override
+    public CompletableFuture<? extends MonthlyService> loadProfile() {
+        return new GravStats(null).getMonthlyProfile(UUIDUtils.strip(Beezig.user().getId()))
+            .thenApplyAsync(MonthlyService::new);
     }
 }
