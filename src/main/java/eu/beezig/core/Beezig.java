@@ -21,6 +21,7 @@ package eu.beezig.core;
 
 import com.google.gson.Gson;
 import com.mojang.authlib.GameProfile;
+import eu.beezig.core.advrec.anywhere.AdvancedRecordsAnywhere;
 import eu.beezig.core.api.BeezigServiceLoader;
 import eu.beezig.core.command.CommandManager;
 import eu.beezig.core.config.BeezigConfiguration;
@@ -168,6 +169,7 @@ public class Beezig {
         CommandManager.init(this);
         notificationManager = new NotificationManager();
         processManager = new ProcessManager();
+        AdvancedRecordsAnywhere.register();
 
         networkManager = new BeezigNetManager();
         networkManager.connect();

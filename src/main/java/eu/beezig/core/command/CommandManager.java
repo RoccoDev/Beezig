@@ -44,6 +44,7 @@ public class CommandManager {
         commandExecutors.add(new ProfileCommand());
         commandExecutors.add(new BUpdateCommand());
         commandExecutors.add(new BlockstatsCommand());
+        commandExecutors.add(new RecordsOverlayCommand());
     }
 
     @EventHandler
