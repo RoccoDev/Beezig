@@ -36,7 +36,7 @@ public class ServerHive extends ServerInstance {
 
     private long tokens;
     private int medals;
-    private String lobby;
+    private String lobby, nick;
     private HivePlayer profile;
     private boolean inParty;
     private boolean inPartyChat;
@@ -79,6 +79,10 @@ public class ServerHive extends ServerInstance {
         this.tokens += tokens;
     }
 
+    public String getNick() {
+        return nick == null ? Beezig.user().getName() : nick;
+    }
+
     @Override
     public void registerListeners() {
         GameListenerRegistry registry = getGameListener();
@@ -92,6 +96,9 @@ public class ServerHive extends ServerInstance {
         registry.registerListener(new GRAVListener());
         registry.registerListener(new BPListener());
         registry.registerListener(new SPListener());
+        DRAWListener draw = new DRAWListener();
+        registry.registerListener(draw);
+        Beezig.api().getPluginManager().registerListener(Beezig.get(), draw);
     }
 
     @Override
@@ -193,15 +200,16 @@ public class ServerHive extends ServerInstance {
                 gameMode.setState(GameState.GAME);
                 WorldTask.submit(() -> Beezig.api().sendPlayerMessage("/gameid"));
             }
+            else if("nick".equals(key)) nick = match.get(0);
+            else if("nick.reset".equals(key)) nick = null;
             // Advanced Records
             if(gameMode instanceof HiveMode) match.ignoreMessage(((HiveMode) gameMode).getAdvancedRecords().parseMessage(key, match));
         }
 
         @Override
         public void onServerConnect(GameMode gameMode) {
-            if(gameMode instanceof HiveMode) {
-                HiveMode hive = (HiveMode) gameMode;
-                if(hive.getGameID() != null) hive.end();
+            if(gameMode instanceof HiveMode && gameMode.getState() != GameState.LOBBY) {
+                ((HiveMode) gameMode).end();
             }
             if(readyForLobby) {
                 readyForLobby = false;
@@ -213,9 +221,8 @@ public class ServerHive extends ServerInstance {
 
         @Override
         public void onServerDisconnect(GameMode gameMode) {
-            if(gameMode instanceof HiveMode) {
-                HiveMode hive = (HiveMode) gameMode;
-                if(hive.getGameID() != null) hive.end();
+            if(gameMode instanceof HiveMode && gameMode.getState() != GameState.LOBBY) {
+                ((HiveMode) gameMode).end();
             }
             if(Beezig.get().getTemporaryPointsManager() != null)
                 Beezig.get().getTemporaryPointsManager().endSession();
@@ -229,6 +236,13 @@ public class ServerHive extends ServerInstance {
                 mode.getStatsFetcher().attemptCompute(mode, Beezig.api().getSideScoreboard());
             }
             Beezig.net().getProfilesCache().tryUpdateList();
+        }
+
+        @Override
+        public void onTitle(GameMode gameMode, String title, String subTitle) {
+            if(Beezig.get().isTitleDebugEnabled()) {
+                Beezig.logger.info(String.format("[Beezig-Title Debug] (%s) (%s)", title, subTitle));
+            }
         }
     }
 }

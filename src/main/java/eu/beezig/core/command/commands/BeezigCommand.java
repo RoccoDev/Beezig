@@ -54,6 +54,9 @@ public class BeezigCommand implements Command {
                 Toolkit.getDefaultToolkit().getSystemClipboard().setContents(sel, sel);
                 Message.info("Debug info has been copied to your clipboard.");
             }
+            else if("debug".equalsIgnoreCase(mode)) {
+                Message.info("Title debug: " + (Beezig.get().toggleTitleDebug() ? "§aenabled" : "§cdisabled"));
+            }
         }
         return true;
     }

@@ -77,6 +77,7 @@ public class Beezig {
     private ProcessManager processManager;
     private BeezigServiceLoader serviceLoader;
     private boolean laby;
+    private boolean titleDebug;
 
     public Beezig(boolean laby, File labyDir) {
         this.laby = laby;
@@ -236,6 +237,14 @@ public class Beezig {
 
     public BeezigServiceLoader getServiceLoader() {
         return serviceLoader;
+    }
+
+    public boolean isTitleDebugEnabled() {
+        return titleDebug;
+    }
+
+    public boolean toggleTitleDebug() {
+        return titleDebug = !titleDebug;
     }
 
     public static Beezig get() {

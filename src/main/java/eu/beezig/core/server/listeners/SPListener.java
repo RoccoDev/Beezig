@@ -19,8 +19,11 @@
 
 package eu.beezig.core.server.listeners;
 
+import eu.beezig.core.Beezig;
+import eu.beezig.core.server.ServerHive;
 import eu.beezig.core.server.modes.SP;
 import eu.the5zig.mod.server.AbstractGameListener;
+import eu.the5zig.mod.server.GameState;
 import eu.the5zig.mod.server.IPatternResult;
 
 public class SPListener extends AbstractGameListener<SP> {
@@ -37,10 +40,19 @@ public class SPListener extends AbstractGameListener<SP> {
 
     @Override
     public void onMatch(SP gameMode, String key, IPatternResult match) {
-        if("sp.points".equals(key)) gameMode.addPoints(10);
+        if("sp.points".equals(key)) {
+            String nick = ((ServerHive) Beezig.api().getActiveServer()).getNick();
+            String player = match.get(0);
+            if(!nick.equals(player)) gameMode.addPoints(10);
+        }
         else if("sp.win".equals(key)) {
             gameMode.addPoints(170);
             gameMode.setWon();
         }
+    }
+
+    @Override
+    public void onTitle(SP gameMode, String title, String subTitle) {
+        if("§r§e➊§r".equals(title)) gameMode.setState(GameState.GAME);
     }
 }
