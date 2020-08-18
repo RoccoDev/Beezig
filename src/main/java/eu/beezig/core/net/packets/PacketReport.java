@@ -94,7 +94,7 @@ public class PacketReport implements Packet {
     @Override
     public void handle(Connection handler) {
         if(type == Type.NEW) {
-            Message.info(Beezig.api().translate("msg.report.submit", in.formatTargets(), in.formatReasons()));
+            Message.info(Beezig.api().translate("msg.report.submitted", in.formatTargets(), in.formatReasons()));
         }
         else if(type == Type.NEW_INCOMING) {
             Message.info(Beezig.api().translate("msg.report.incoming", in.getSender(), in.formatTargets(), in.formatReasons()));

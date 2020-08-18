@@ -42,6 +42,7 @@ public class ReportCommand implements Command {
                 Message.info(Beezig.api().translate("msg.report.submit", pDisplay, rDisplay));
                 Beezig.net().getHandler().sendPacket(PacketReport.newReport(new ReportOutgoing(ReportOutgoing.ReportType.PLAYER, players, reasons)));
             }
+            return true;
         }
         sendUsage("/report [player1(, player2, player3)] [reason]");
         return true;

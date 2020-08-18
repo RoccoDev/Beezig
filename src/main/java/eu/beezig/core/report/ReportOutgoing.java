@@ -19,9 +19,9 @@ public class ReportOutgoing {
 
     public void writeTo(PacketBuffer buffer) {
         buffer.writeByte((byte) type.ordinal());
-        buffer.writeInt(targets.length);
+        buffer.writeByte((byte) targets.length);
         for(String player : targets) buffer.writeString(player);
-        buffer.writeInt(reasons.length);
+        buffer.writeByte((byte) reasons.length);
         for(String reason : reasons) buffer.writeString(reason);
     }
 }

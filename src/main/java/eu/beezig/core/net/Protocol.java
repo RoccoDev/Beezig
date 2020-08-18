@@ -39,6 +39,7 @@ public class Protocol {
         register(0x7, PacketUserSettings.class);
         register(0x8, PacketUpdateCache.class);
         register(0x9, PacketProfile.class);
+        register(0x10, PacketReport.class);
     }
 
     private void register(int id, Class<? extends Packet> packet) {
