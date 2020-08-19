@@ -18,6 +18,7 @@ public class PacketReport implements Packet {
     private boolean includeClaimed;
     private String message, sender;
     private ReportIncoming[] reports, claimed;
+    private byte page;
 
     // C->S, send outgoing report
     public static PacketReport newReport(ReportOutgoing report) {
@@ -53,10 +54,11 @@ public class PacketReport implements Packet {
     }
 
     // C->S, list reports
-    public static PacketReport request(boolean includeClaimed) {
+    public static PacketReport request(boolean includeClaimed, byte page) {
         PacketReport result = new PacketReport();
         result.type = Type.REQUEST;
         result.includeClaimed = includeClaimed;
+        result.page = page;
         return result;
     }
 
@@ -73,6 +75,7 @@ public class PacketReport implements Packet {
             message = buffer.readString(buffer.readInt());
         }
         if(type == Type.REQUEST) {
+            page = buffer.readByte();
             reports = new ReportIncoming[buffer.readInt()];
             for(int i = 0; i < reports.length; i++) reports[i] = ReportIncoming.readFrom(buffer);
             claimed = new ReportIncoming[buffer.readInt()];
@@ -85,7 +88,10 @@ public class PacketReport implements Packet {
         buffer.writeByte((byte) type.ordinal());
         if(type == Type.NEW) out.writeTo(buffer);
         else if(type == Type.CLAIM || type == Type.HANDLE) buffer.writeInt(id);
-        else if(type == Type.REQUEST) buffer.writeBoolean(includeClaimed);
+        else if(type == Type.REQUEST) {
+            buffer.writeBoolean(includeClaimed);
+            buffer.writeByte(page);
+        }
         else if(type == Type.CHAT) {
             buffer.writeInt(id);
             buffer.writeBigString(message);
@@ -103,7 +109,7 @@ public class PacketReport implements Packet {
         else if(type == Type.CLAIM) Message.info(Beezig.api().translate("msg.report.claim", id));
         else if(type == Type.HANDLE) Message.info(Beezig.api().translate("msg.report.handle", id));
         else if(type == Type.CHAT) Message.info(Beezig.api().translate("msg.report.chat", in.formatTargets(), sender, message));
-        else if(type == Type.REQUEST) ReportsCommand.sendResult(reports, claimed);
+        else if(type == Type.REQUEST) ReportsCommand.sendResult(reports, claimed, page);
         else if(type == Type.SET_MOD) Beezig.get().setMod(true);
     }
 
