@@ -1,6 +1,7 @@
 package eu.beezig.core.net.packets;
 
 import eu.beezig.core.Beezig;
+import eu.beezig.core.command.commands.ReportsCommand;
 import eu.beezig.core.net.Packet;
 import eu.beezig.core.net.handler.Connection;
 import eu.beezig.core.net.util.PacketBuffer;
@@ -102,12 +103,11 @@ public class PacketReport implements Packet {
         else if(type == Type.CLAIM) Message.info(Beezig.api().translate("msg.report.claim", id));
         else if(type == Type.HANDLE) Message.info(Beezig.api().translate("msg.report.handle", id));
         else if(type == Type.CHAT) Message.info(Beezig.api().translate("msg.report.chat", in.formatTargets(), sender, message));
-        else if(type == Type.REQUEST) {
-            
-        }
+        else if(type == Type.REQUEST) ReportsCommand.sendResult(reports, claimed);
+        else if(type == Type.SET_MOD) Beezig.get().setMod(true);
     }
 
     private enum Type {
-        REQUEST, NEW, CLAIM, HANDLE, CHAT, NEW_INCOMING
+        REQUEST, NEW, CLAIM, HANDLE, CHAT, NEW_INCOMING, SET_MOD
     }
 }

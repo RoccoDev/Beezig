@@ -196,7 +196,7 @@ public class ServerHive extends ServerInstance {
                 inParty = false;
                 inPartyChat = false;
             }
-            else if(key.endsWith(".setstate")) {
+            else if(key.endsWith(".setstate") && gameMode != null) {
                 gameMode.setState(GameState.GAME);
                 WorldTask.submit(() -> Beezig.api().sendPlayerMessage("/gameid"));
             }

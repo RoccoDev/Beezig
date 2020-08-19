@@ -1,8 +1,12 @@
 package eu.beezig.core.report;
 
+import eu.beezig.core.Beezig;
 import eu.beezig.core.net.util.PacketBuffer;
 import eu.beezig.core.util.Color;
+import eu.beezig.core.util.text.Message;
 import eu.beezig.core.util.text.StringUtils;
+import eu.the5zig.mod.util.component.MessageComponent;
+import eu.the5zig.mod.util.component.style.MessageAction;
 
 import java.util.Arrays;
 
@@ -51,10 +55,25 @@ public class ReportIncoming {
         return Color.accent() + StringUtils.localizedJoin(Arrays.asList(targets)) + Color.primary();
     }
 
+    public MessageComponent getForList(boolean modDisplay) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(Color.primary()).append(" - ").append(formatTargets()).append(" (").append(formatReasons()).append(") ");
+        if(!modDisplay && isClaimed()) {
+            sb.append(" [§a§l").append(Message.translate("msg.report.claimed")).append(Color.primary()).append("]");
+        }
+        MessageComponent comp = new MessageComponent(sb.toString());
+        comp.getStyle().setOnHover(new MessageAction(MessageAction.Action.SHOW_TEXT, new MessageComponent(
+            modDisplay
+            ? String.format("%s#%d%s, %s", Color.accent(), id, Color.primary(), Beezig.api().translate("msg.reports.reported_by", Color.accent() + sender))
+            : String.format("%s#%d%s", Color.accent(), id, isClaimed() ? " " + Color.primary() + Beezig.api().translate("msg.reports.claimed_by", Color.accent() + claimer) : "")
+        )));
+        return comp;
+    }
+
     public static ReportIncoming readFrom(PacketBuffer buffer) {
         ReportIncoming result = new ReportIncoming();
         result.id = buffer.readInt();
-        result.type = ReportOutgoing.ReportType.values()[(int)buffer.readByte()];
+        result.type = ReportOutgoing.ReportType.values()[buffer.readByte()];
         result.sender = buffer.readString();
         result.targets = new String[buffer.readInt()];
         for(int i = 0; i < result.targets.length; i++) result.targets[i] = buffer.readString();

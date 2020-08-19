@@ -79,6 +79,7 @@ public class Beezig {
     private BeezigServiceLoader serviceLoader;
     private boolean laby;
     private boolean titleDebug;
+    private boolean isMod;
 
     public Beezig(boolean laby, File labyDir) {
         this.laby = laby;
@@ -191,6 +192,14 @@ public class Beezig {
         }
         ctx.updateLoggers();
         logger.debug("Debug is active.");
+    }
+
+    public boolean isMod() {
+        return isMod;
+    }
+
+    public void setMod(boolean mod) {
+        isMod = mod;
     }
 
     public ScheduledExecutorService getAsyncExecutor() {
