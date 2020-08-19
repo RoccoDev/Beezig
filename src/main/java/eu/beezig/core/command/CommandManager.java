@@ -47,6 +47,7 @@ public class CommandManager {
         commandExecutors.add(new RecordsOverlayCommand());
         commandExecutors.add(new ReportCommand());
         commandExecutors.add(new ReportsCommand());
+        commandExecutors.add(new ClaimReportCommand());
     }
 
     @EventHandler

@@ -5,6 +5,7 @@ import eu.beezig.core.net.util.PacketBuffer;
 import eu.beezig.core.util.Color;
 import eu.beezig.core.util.text.Message;
 import eu.beezig.core.util.text.StringUtils;
+import eu.beezig.core.util.text.TextButton;
 import eu.the5zig.mod.util.component.MessageComponent;
 import eu.the5zig.mod.util.component.style.MessageAction;
 
@@ -68,6 +69,24 @@ public class ReportIncoming {
             : String.format("%s#%d%s", Color.accent(), id, isClaimed() ? " " + Color.primary() + Beezig.api().translate("msg.reports.claimed_by", Color.accent() + claimer) : "")
         )));
         return comp;
+    }
+
+    public MessageComponent getActions() {
+        MessageComponent base = new MessageComponent(Message.infoPrefix());
+        TextButton claim = new TextButton("btn.report.claim.name", "btn.report.claim.desc", "§e");
+        claim.doRunCommand("/bclaim " + id);
+        TextButton claimHandle = new TextButton("btn.report.handle.name", "btn.report.handle.desc", "§a");
+        claimHandle.doRunCommand("/bclaim " + id + " -h");
+        base.getSiblings().add(claim);
+        base.getSiblings().add(new MessageComponent(" "));
+        if(targets.length == 1) {
+            TextButton claimTp = new TextButton("btn.report.tp.name", "btn.report.tp.desc", "§b");
+            claimTp.doRunCommand("/bclaim " + id + " -tp " + targets[0]);
+            base.getSiblings().add(claimTp);
+            base.getSiblings().add(new MessageComponent(" "));
+        }
+        base.getSiblings().add(claimHandle);
+        return base;
     }
 
     public static ReportIncoming readFrom(PacketBuffer buffer) {

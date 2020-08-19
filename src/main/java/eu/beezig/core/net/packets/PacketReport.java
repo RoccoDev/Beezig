@@ -105,6 +105,7 @@ public class PacketReport implements Packet {
         }
         else if(type == Type.NEW_INCOMING) {
             Message.info(Beezig.api().translate("msg.report.incoming", in.getSender(), in.formatTargets(), in.formatReasons()));
+            Beezig.api().messagePlayerComponent(in.getActions(), false);
         }
         else if(type == Type.CLAIM) Message.info(Beezig.api().translate("msg.report.claim", id));
         else if(type == Type.HANDLE) Message.info(Beezig.api().translate("msg.report.handle", id));
