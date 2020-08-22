@@ -25,7 +25,7 @@ public class ReportsCommand implements Command {
     public boolean execute(String[] args) {
         boolean includeClaimed = (args.length == 1 && args[0].toLowerCase(Locale.ROOT).startsWith("c"))
             || (args.length == 2 && args[1].toLowerCase(Locale.ROOT).startsWith("c"));
-        byte page = args.length == 1 || args.length == 2 ? Byte.parseByte(args[0], 10) : 1;
+        byte page = (args.length == 1 && !includeClaimed) || args.length == 2 ? Byte.parseByte(args[0], 10) : 1;
         Beezig.net().getHandler().sendPacket(PacketReport.request(includeClaimed, page));
         return true;
     }

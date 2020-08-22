@@ -7,7 +7,12 @@ import eu.beezig.core.net.handler.Connection;
 import eu.beezig.core.net.util.PacketBuffer;
 import eu.beezig.core.report.ReportIncoming;
 import eu.beezig.core.report.ReportOutgoing;
+import eu.beezig.core.util.Color;
 import eu.beezig.core.util.text.Message;
+import eu.beezig.core.util.text.StringUtils;
+
+import java.util.Arrays;
+import java.util.Locale;
 
 public class PacketReport implements Packet {
 
@@ -19,6 +24,8 @@ public class PacketReport implements Packet {
     private String message, sender;
     private ReportIncoming[] reports, claimed;
     private byte page;
+    private NotifyType notifyType;
+    private String[] targets;
 
     // C->S, send outgoing report
     public static PacketReport newReport(ReportOutgoing report) {
@@ -81,6 +88,11 @@ public class PacketReport implements Packet {
             claimed = new ReportIncoming[buffer.readInt()];
             for(int i = 0; i < claimed.length; i++) claimed[i] = ReportIncoming.readFrom(buffer);
         }
+        if(type == Type.NOTIFY) {
+            notifyType = NotifyType.values()[buffer.readByte()];
+            targets = new String[buffer.readByte()];
+            for(int i = 0; i < targets.length; i++) targets[i] = buffer.readString();
+        }
     }
 
     @Override
@@ -112,9 +124,19 @@ public class PacketReport implements Packet {
         else if(type == Type.CHAT) Message.info(Beezig.api().translate("msg.report.chat", in.formatTargets(), sender, message));
         else if(type == Type.REQUEST) ReportsCommand.sendResult(reports, claimed, page);
         else if(type == Type.SET_MOD) Beezig.get().setMod(true);
+        else if(type == Type.NOTIFY) Message.info(notifyType.translate(targets));
     }
 
     private enum Type {
-        REQUEST, NEW, CLAIM, HANDLE, CHAT, NEW_INCOMING, SET_MOD
+        REQUEST, NEW, CLAIM, HANDLE, CHAT, NEW_INCOMING, SET_MOD, NOTIFY
+    }
+
+    private enum NotifyType {
+        CLAIM, HANDLE;
+
+        String translate(String[] targets) {
+            return Beezig.api().translate("msg.report.notify." + name().toLowerCase(Locale.ROOT),
+                Color.accent() + StringUtils.localizedJoin(Arrays.asList(targets)) + Color.primary());
+        }
     }
 }
