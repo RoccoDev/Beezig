@@ -20,6 +20,10 @@ public class ClaimReportCommand implements Command {
 
     @Override
     public boolean execute(String[] args) {
+        if(args.length == 0) {
+            sendUsage("/bclaim [id] (-h: handle) (-tp [name]: teleport to player)");
+            return true;
+        }
         int id = Integer.parseInt(args[0], 10);
         List<String> list = Arrays.asList(Arrays.copyOfRange(args, 1, args.length));
         Beezig.net().getHandler().sendPacket(PacketReport.claim(id));
