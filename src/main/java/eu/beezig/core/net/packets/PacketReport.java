@@ -75,12 +75,8 @@ public class PacketReport implements Packet {
     @Override
     public void read(PacketBuffer buffer) {
         type = Type.values()[buffer.readByte()];
-        if(type == Type.NEW || type == Type.NEW_INCOMING || type == Type.CHAT) in = ReportIncoming.readFrom(buffer);
+        if(type == Type.NEW || type == Type.NEW_INCOMING) in = ReportIncoming.readFrom(buffer);
         else if(type == Type.CLAIM || type == Type.HANDLE) id = buffer.readInt();
-        if(type == Type.CHAT) {
-            sender = buffer.readString();
-            message = buffer.readString(buffer.readInt());
-        }
         if(type == Type.REQUEST) {
             page = buffer.readByte();
             reports = new ReportIncoming[buffer.readInt()];
@@ -89,9 +85,17 @@ public class PacketReport implements Packet {
             for(int i = 0; i < claimed.length; i++) claimed[i] = ReportIncoming.readFrom(buffer);
         }
         if(type == Type.NOTIFY) {
+            id = buffer.readInt();
             notifyType = NotifyType.values()[buffer.readByte()];
             targets = new String[buffer.readByte()];
             for(int i = 0; i < targets.length; i++) targets[i] = buffer.readString();
+        }
+        if(type == Type.CHAT) {
+            id = buffer.readInt();
+            sender = buffer.readString();
+            targets = new String[buffer.readByte()];
+            for(int i = 0; i < targets.length; i++) targets[i] = buffer.readString();
+            message = buffer.readString(buffer.readInt());
         }
     }
 
@@ -119,12 +123,12 @@ public class PacketReport implements Packet {
             Message.info(Beezig.api().translate("msg.report.incoming", in.getSender(), in.formatTargets(), in.formatReasons()));
             Beezig.api().messagePlayerComponent(in.getActions(), false);
         }
-        else if(type == Type.CLAIM) Message.info(Beezig.api().translate("msg.report.claim", id));
+        else if(type == Type.CLAIM) Beezig.api().translate("msg.report.claim", id);
         else if(type == Type.HANDLE) Message.info(Beezig.api().translate("msg.report.handle", id));
-        else if(type == Type.CHAT) Message.info(Beezig.api().translate("msg.report.chat", in.formatTargets(), sender, message));
+        else if(type == Type.CHAT) Beezig.api().messagePlayerComponent(ReportIncoming.getChatActions(targets, sender, message, id), false);
         else if(type == Type.REQUEST) ReportsCommand.sendResult(reports, claimed, page);
         else if(type == Type.SET_MOD) Beezig.get().setMod(true);
-        else if(type == Type.NOTIFY) Message.info(notifyType.translate(targets));
+        else if(type == Type.NOTIFY) Beezig.api().messagePlayerComponent(ReportIncoming.getWithButton(notifyType.translate(targets), id), false);
     }
 
     private enum Type {

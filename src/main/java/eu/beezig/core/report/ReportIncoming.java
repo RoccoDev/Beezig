@@ -102,4 +102,27 @@ public class ReportIncoming {
         result.handled = buffer.readBoolean();
         return result;
     }
+
+    private static TextButton getReplyButton(boolean reply, int id) {
+        TextButton btn = new TextButton(reply ? "btn.report.reply.name" : "btn.report.contact.name",
+            reply ? "btn.report.reply.desc" : "btn.report.contact.desc", "§e");
+        btn.doSuggestCommand("/brm " + id + " ");
+        return btn;
+    }
+
+    public static MessageComponent getWithButton(String message, int id) {
+        MessageComponent base = new MessageComponent(Message.infoPrefix() + message);
+        base.getSiblings().add(new MessageComponent(" "));
+        base.getSiblings().add(getReplyButton(false, id));
+        return base;
+    }
+
+    public static MessageComponent getChatActions(String[] targets, String sender, String message, int id) {
+        MessageComponent base = new MessageComponent(Message.infoPrefix() + Beezig.api().translate("msg.report.chat", Color.accent()
+            + StringUtils.localizedJoin(Arrays.asList(targets)) + Color.primary(), Color.accent() + sender + Color.primary(),
+            Color.accent() + message));
+        base.getSiblings().add(new MessageComponent(" "));
+        base.getSiblings().add(getReplyButton(true, id));
+        return base;
+    }
 }

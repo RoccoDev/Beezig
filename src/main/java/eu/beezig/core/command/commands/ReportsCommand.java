@@ -18,7 +18,7 @@ public class ReportsCommand implements Command {
 
     @Override
     public String[] getAliases() {
-        return new String[] {"/breports"};
+        return new String[] {"/breports", "/brs"};
     }
 
     @Override

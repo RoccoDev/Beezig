@@ -15,7 +15,7 @@ public class ClaimReportCommand implements Command {
 
     @Override
     public String[] getAliases() {
-        return new String[] {"/bclaim"};
+        return new String[] {"/bclaim", "/brc"};
     }
 
     @Override
