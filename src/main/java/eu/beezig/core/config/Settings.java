@@ -79,7 +79,8 @@ public enum Settings {
     AUTONEWGAME_IN_PARTIES(false),
     RECORD_DND(false),
     CHAT_PARTY(true),
-    CHAT_FRIENDS(true);
+    CHAT_FRIENDS(true),
+    REPORTS_NOTIFY(true);
 
     private final Object defaultValue;
     private final Class settingType;

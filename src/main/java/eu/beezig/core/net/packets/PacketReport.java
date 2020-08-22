@@ -2,6 +2,7 @@ package eu.beezig.core.net.packets;
 
 import eu.beezig.core.Beezig;
 import eu.beezig.core.command.commands.ReportsCommand;
+import eu.beezig.core.config.Settings;
 import eu.beezig.core.net.Packet;
 import eu.beezig.core.net.handler.Connection;
 import eu.beezig.core.net.util.PacketBuffer;
@@ -119,7 +120,7 @@ public class PacketReport implements Packet {
         if(type == Type.NEW) {
             Message.info(Beezig.api().translate("msg.report.submitted", in.formatTargets(), in.formatReasons()));
         }
-        else if(type == Type.NEW_INCOMING) {
+        else if(type == Type.NEW_INCOMING && Settings.REPORTS_NOTIFY.get().getBoolean()) {
             Message.info(Beezig.api().translate("msg.report.incoming", in.getSender(), in.formatTargets(), in.formatReasons()));
             Beezig.api().messagePlayerComponent(in.getActions(), false);
         }
