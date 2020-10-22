@@ -1,6 +1,8 @@
 # Beezig GitLab CI Configuration
 # Copyright (C) 2020  Beezig Team
 ---
+include:
+  - template: Security/SAST.gitlab-ci.yml
 
 image: openjdk:8-alpine
 
