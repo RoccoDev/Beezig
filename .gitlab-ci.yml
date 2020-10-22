@@ -8,6 +8,7 @@ image: openjdk:8-alpine
 
 stages:
     - build
+    - test
     - deploy
 
 build:
