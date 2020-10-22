@@ -46,6 +46,9 @@ pages:
         policy: pull-push
         paths:
             - public # Also store the previous beta build / release
+    artifacts:
+        paths:
+            - public/
 
 deploy:version:
     stage: deploy
