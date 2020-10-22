@@ -34,7 +34,7 @@ pages:
         - apk add git
     script:
         - mkdir -p public/{release,beta}
-        - if [ $(git rev-list --count "$(git describe --abbrev=0 HEAD)") = 0 ] ; then rm public/release/*.jar || true ; cp build/libs/*.jar public/release; else rm public/beta/*.jar || true ; cp build/libs/*.jar public/beta/; fi
+        - if [ $(git rev-list --count "$(git describe --abbrev=0 HEAD)") = 0 ] ; then rm public/release/*.jar || true ; cp build/libs/*.jar public/release/Beezig.jar ; else rm public/beta/*.jar || true ; cp build/libs/*.jar public/beta/Beezig.jar ; fi
     only:
         refs:
             - master
