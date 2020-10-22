@@ -34,7 +34,7 @@ pages:
         - apk add git
     script:
         - mkdir -p public/release public/beta
-        - if [ $(git rev-list --count "$(git describe --abbrev=0 --tags)") = 0 ] ; then rm public/release/*.jar || true ; cp build/libs/*.jar public/release/Beezig.jar ; else rm public/beta/*.jar || true ; cp build/libs/*.jar public/beta/Beezig.jar ; fi
+        - if [ $(git rev-list --count "$(git describe --abbrev=0 --tags)"..HEAD) = 0 ] ; then rm public/release/*.jar || true ; cp build/libs/*.jar public/release/Beezig.jar ; else rm public/beta/*.jar || true ; cp build/libs/*.jar public/beta/Beezig.jar ; fi
     only:
         refs:
             - master
@@ -58,7 +58,7 @@ deploy:version:
         - chmod go= "$DEPLOY_KEY"
         - mkdir -p ~/.ssh/ || true
         - ssh-keyscan -H 'gitlab.com' >> ~/.ssh/known_hosts
-        - export reltype="$( if [ $(git rev-list --count "$(git describe --abbrev=0 --tags)") = 0 ] ; then echo release ; else echo beta ; fi )""
+        - export reltype="$( if [ $(git rev-list --count "$(git describe --abbrev=0 --tags)"..HEAD) = 0 ] ; then echo release ; else echo beta ; fi )""
         - ssh-agent bash -c "ssh-add \"$DEPLOY_KEY\"; git clone git@gitlab.com:Beezig/version.git ; version/update-version.sh --module beezig --type \"$bversion\" --version 7.0.0 \"version/$reltype.json\" ; cd version; git add \"$reltype\".json ; git -c 'user.name=GitLab Deploy' -c 'user.email=noreply@gitlab.com' commit -m \"Update $reltype version\" ; git push origin master"
         - curl -X POST -F token=$BEEZIGLABY_TRIGGER -F ref=rewrite https://gitlab.com/api/v4/projects/11233515/trigger/pipeline
     only:
