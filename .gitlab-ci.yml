@@ -8,6 +8,11 @@ stages:
     - test
     - deploy
 
+cache: &globalcache
+    paths:
+        - build/libs/*.jar
+    key: "$CI_COMMIT_REF_SLUG"
+
 build:
     stage: build
     before_script:
@@ -18,8 +23,29 @@ build:
         paths:
             - build/libs/*.jar
         expire_in: 1 week
+    cache:
+        <<: *globalcache
+        policy: push
 
-deploy version:
+pages:
+    image: alpine:latest
+    stage: deploy
+    script:
+        - mkdir -p public/{release,beta}
+        - if [ $(git rev-list --count "$(git describe --abbrev=0 HEAD)") = 0 ] ; then rm public/release/*.jar ; cp build/libs/*.jar public/release; else rm public/beta/*.jar ; cp build/libs/*.jar public/beta/; fi
+    only:
+        refs:
+            - master
+            - rewrite-2020-archer_321-ci # TODO Remove me
+    except:
+        - merge_requests
+    cache:
+        <<: *globalcache
+        policy: pull-push
+        paths:
+            - public # Also store the previous beta build / release
+
+deploy:version:
     stage: deploy
     before_script:
         - apk add openssh git jq bash coreutils curl
@@ -32,5 +58,6 @@ deploy version:
     only:
         refs:
             - rewrite-2020
+    cache: {}
 
 ...
