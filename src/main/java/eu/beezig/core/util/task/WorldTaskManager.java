@@ -20,11 +20,11 @@
 package eu.beezig.core.util.task;
 
 import eu.beezig.core.Beezig;
+import eu.beezig.core.util.ExceptionHandler;
 import eu.the5zig.mod.event.EventHandler;
 import eu.the5zig.mod.event.TickEvent;
 
 import java.util.ArrayDeque;
-import java.util.Iterator;
 
 public class WorldTaskManager {
     private ArrayDeque<WorldTask> tasks = new ArrayDeque<>();
@@ -32,11 +32,13 @@ public class WorldTaskManager {
     @EventHandler
     public void onTick(TickEvent evt) {
         if(Beezig.api().isInWorld()) {
-            Iterator<WorldTask> iter = tasks.iterator();
-            while(iter.hasNext()) {
-                WorldTask task = iter.next();
-                task.run();
-                tasks.remove(task);
+            while(!tasks.isEmpty()) {
+                WorldTask task = tasks.poll();
+                try {
+                    task.run();
+                } catch (Exception e) {
+                    ExceptionHandler.catchException(e, "WorldTask");
+                }
             }
         }
     }

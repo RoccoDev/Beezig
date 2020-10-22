@@ -57,7 +57,7 @@ public class Message {
 
     public static String formatNumber(long l) {
         return Settings.THOUSANDS_SEPARATOR.get().getBoolean()
-                ? bigintFormatter.format(l).replaceAll("\u00A0", " ")
+                ? bigintFormatter.format(l).replaceAll("\u00A0", " ") // Replace nbsp with space
                 : Long.toString(l);
     }
 
@@ -75,7 +75,7 @@ public class Message {
 
     public static Number getNumberFromFormat(String format) {
         try {
-            return NumberFormat.getInstance().parse(format);
+            return NumberFormat.getInstance().parse(format.replace(" ", "\u00a0")); // Replace space with nbsp
         } catch (ParseException e) {
             ExceptionHandler.catchException(e);
         }

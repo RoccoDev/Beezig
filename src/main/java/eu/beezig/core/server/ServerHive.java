@@ -175,7 +175,6 @@ public class ServerHive extends ServerInstance {
                             String.format("%s (%s)", localBeezigVersion.getVersion(), localBeezigVersion.getCommits()),
                             String.format("%s (%s)", beezigVersion.getVersion(), beezigVersion.getCommits())));
                         versionsBehind = localBeezigVersion.getVersionsBehind(beezigVersion);
-                        Beezig.get().setUpdateAvailable();
                     }
                     if (localBeezigForgeVersion != null) {
                         Version beezigForgeVersion = beezig.getRemoteBeezigForgeVersion();
@@ -187,7 +186,6 @@ public class ServerHive extends ServerInstance {
                             int versions = localBeezigForgeVersion.getVersionsBehind(beezigForgeVersion);
                             if (versions > versionsBehind)
                                 versionsBehind = versions;
-                            Beezig.get().setBeezigForgeUpdateAvailable();
                         }
                     }
                     if (localBeezigLabyVersion != null) {

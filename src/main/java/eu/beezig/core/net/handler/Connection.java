@@ -36,6 +36,7 @@ import io.netty.util.concurrent.GenericFutureListener;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.Queue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Connection extends SimpleChannelInboundHandler<Packet> {
 
@@ -44,6 +45,7 @@ public class Connection extends SimpleChannelInboundHandler<Packet> {
     private boolean disconnected;
     private String disconnectReason;
     private int handshakeSecret;
+    private AtomicBoolean authenticated = new AtomicBoolean(false);
 
     public void setHandshakeSecret(int handshakeSecret) {
         this.handshakeSecret = handshakeSecret;
@@ -61,6 +63,14 @@ public class Connection extends SimpleChannelInboundHandler<Packet> {
         } catch (NoSuchAlgorithmException | AuthenticationException e) {
             ExceptionHandler.catchException(e, "Couldn't authenticate connection");
         }
+    }
+
+    public boolean isAuthenticated() {
+        return authenticated.get();
+    }
+
+    public void setAuthenticated() {
+        authenticated.set(true);
     }
 
     @Override

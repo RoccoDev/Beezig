@@ -85,7 +85,7 @@ public class NewsManager {
                 if(firstNews) firstNews = false;
                 else Beezig.api().messagePlayer(""); // 1 newline
                 Beezig.api().messagePlayer(StringUtils.centerWithSpaces(Color.primary() + ChatColor.UNDERLINE + news.getTitle()));
-                List<String> lines = NEWLINE.splitToList(WordUtils.wrap(news.getContent(), 50));
+                List<String> lines = NEWLINE.splitToList(WordUtils.wrap(news.getContent() == null ? "?" : news.getContent(), 50));
                 int count = 0;
                 for(String line : lines) {
                     Beezig.api().messagePlayer(StringUtils.centerWithSpaces(Color.accent() + line));

@@ -91,6 +91,8 @@ public class ProfilesCache {
     }
 
     public void tryUpdateList() {
+        if(Beezig.net() == null || Beezig.net().getHandler() == null) return;
+        if(!Beezig.net().getHandler().isAuthenticated()) return;
         Collection<NetworkPlayerInfo> players = Beezig.api().getServerPlayers();
         if(players.size() == cachedPlayers.size()) return;
         Set<UUID> ids = players.stream().map(info -> info.getGameProfile().getId()).collect(Collectors.toSet());

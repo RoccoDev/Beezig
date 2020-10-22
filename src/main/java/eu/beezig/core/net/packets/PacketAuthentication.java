@@ -40,6 +40,7 @@ public class PacketAuthentication implements Packet {
 
     @Override
     public void handle(Connection handler) {
+        handler.setAuthenticated();
         Beezig.logger.info("Authentication successful!");
         TimezoneUtils.getTimezone().thenAcceptAsync(tz -> handler.sendPacket(new PacketProfile(tz)))
                 .exceptionally(e -> {

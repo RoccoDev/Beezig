@@ -29,13 +29,15 @@ public class SystemTrayManager {
     private boolean supported;
 
     public SystemTrayManager() {
-        SystemTray tray = SystemTray.getSystemTray();
-        mainIcon = new TrayIcon(Toolkit.getDefaultToolkit().createImage(Beezig.class.getResource("/img/logo.png")), "Beezig");
-        mainIcon.setImageAutoSize(true);
-        mainIcon.setToolTip("Beezig");
         try {
+            SystemTray tray = SystemTray.getSystemTray();
+            mainIcon = new TrayIcon(Toolkit.getDefaultToolkit().createImage(Beezig.class.getResource("/img/logo.png")), "Beezig");
+            mainIcon.setImageAutoSize(true);
+            mainIcon.setToolTip("Beezig");
             tray.add(mainIcon);
             supported = true;
+        } catch (UnsupportedOperationException ignored) {
+            Beezig.logger.warn("System tray is NOT supported.");
         } catch (AWTException e) {
             ExceptionHandler.catchException(e);
         }
