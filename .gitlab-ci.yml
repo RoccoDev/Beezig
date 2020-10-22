@@ -30,6 +30,8 @@ build:
 pages:
     image: alpine:latest
     stage: deploy
+    before_script:
+        - apk add git
     script:
         - mkdir -p public/{release,beta}
         - if [ $(git rev-list --count "$(git describe --abbrev=0 HEAD)") = 0 ] ; then rm public/release/*.jar ; cp build/libs/*.jar public/release; else rm public/beta/*.jar ; cp build/libs/*.jar public/beta/; fi
@@ -53,7 +55,8 @@ deploy:version:
         - chmod go= "$DEPLOY_KEY"
         - mkdir -p ~/.ssh/ || true
         - ssh-keyscan -H 'gitlab.com' >> ~/.ssh/known_hosts
-        - ssh-agent bash -c "ssh-add \"$DEPLOY_KEY\"; git clone git@gitlab.com:Beezig/version.git ; version/update-version.sh --module beezig --type beta --version 7.0.0 version/beta.json ; cd version; git add beta.json ; git -c 'user.name=GitLab Deploy' -c 'user.email=noreply@gitlab.com' commit -m 'Update beta version' ; git push origin master"
+        - export reltype="$( if [ $(git rev-list --count "$(git describe --abbrev=0 HEAD)") = 0 ] ; then echo release ; else echo beta ; fi )""
+        - ssh-agent bash -c "ssh-add \"$DEPLOY_KEY\"; git clone git@gitlab.com:Beezig/version.git ; version/update-version.sh --module beezig --type \"$bversion\" --version 7.0.0 \"version/$reltype.json\" ; cd version; git add \"$reltype\".json ; git -c 'user.name=GitLab Deploy' -c 'user.email=noreply@gitlab.com' commit -m \"Update $reltype version\" ; git push origin master"
         - curl -X POST -F token=$BEEZIGLABY_TRIGGER -F ref=rewrite https://gitlab.com/api/v4/projects/11233515/trigger/pipeline
     only:
         refs:
