@@ -57,7 +57,6 @@ deploy version:
     stage: deploy
     before_script:
         - apk add openssh git jq bash coreutils curl
-        - export GRADLE_USER_HOME=`pwd`/.gradle
     script:
         - chmod go= "$DEPLOY_KEY"
         - mkdir -p ~/.ssh/ || true
