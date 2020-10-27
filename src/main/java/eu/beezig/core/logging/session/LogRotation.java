@@ -6,6 +6,7 @@ import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 
 import java.io.*;
@@ -33,7 +34,7 @@ public class LogRotation {
         if (applicable.length == 0) return;
         Beezig.logger.info("Rotating " + applicable.length + " session logs.");
         String fileName = applicable[0].getName() + "." + applicable[applicable.length - 1].getName() + ".tar.gz";
-        File archive = new File(Beezig.get().getBeezigDir(), "sessions/" + fileName);
+        File archive = new File(Beezig.get().getBeezigDir(), "sessions/" + FilenameUtils.getName(fileName));
         try (FileOutputStream os = new FileOutputStream(archive);
              OutputStream gzip = new GzipCompressorOutputStream(os);
              ArchiveOutputStream tarOut = new TarArchiveOutputStream(gzip)) {

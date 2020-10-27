@@ -26,6 +26,7 @@ import eu.beezig.core.api.BeezigForge;
 import eu.beezig.core.command.Command;
 import eu.beezig.core.util.ExceptionHandler;
 import eu.beezig.core.util.text.Message;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.SystemUtils;
 
 import java.io.File;
@@ -182,7 +183,7 @@ public class BUpdateCommand implements Command {
                     break;
                 case "code":
                     if (args.length == 2) {
-                        code = args[1] + "-";
+                        code = FilenameUtils.getName(args[1]) + "-"; // Escape url stuff
                         Message.info(Beezig.api().translate("update.confirm.custom", code));
                         if (SystemUtils.IS_OS_WINDOWS)
                             Message.error(Beezig.api().translate("update.warning.restart"));

@@ -20,6 +20,7 @@
 package eu.beezig.core;
 
 import com.google.gson.JsonObject;
+import org.apache.commons.io.FilenameUtils;
 
 import java.time.OffsetDateTime;
 import java.util.regex.Matcher;
@@ -41,7 +42,7 @@ public class Version implements Comparable<Version>{
             this.version = version.get("version").getAsString();
             commit = version.get("commit").getAsString();
             commits = version.get("commits").getAsInt();
-            type = version.get("type").getAsString();
+            type = FilenameUtils.getName(version.get("type").getAsString()); // Escape url stuff
             date = OffsetDateTime.parse(version.get("date").getAsString());
         } catch(Exception e) {
             throw new IllegalArgumentException("Version JSON Object is invalid", e);

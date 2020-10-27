@@ -29,6 +29,7 @@ import eu.beezig.core.util.FileUtils;
 import eu.beezig.core.util.text.Message;
 import eu.beezig.hiveapi.wrapper.utils.download.Downloader;
 import eu.beezig.hiveapi.wrapper.utils.json.JObject;
+import org.apache.commons.io.FilenameUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
@@ -186,7 +187,7 @@ public class BeezigData {
         ZipEntry entry = in.getNextEntry();
         while(entry != null) {
             validatePath(entry, out);
-            File dest = new File(out, entry.getName());
+            File dest = new File(out, FilenameUtils.normalize(entry.getName()));
             if(entry.isDirectory()) dest.mkdirs();
             else {
                 dest.getParentFile().mkdirs();
@@ -204,7 +205,7 @@ public class BeezigData {
     // https://snyk.io/research/zip-slip-vulnerability
     private void validatePath(ZipEntry entry, File out) throws IOException {
         String canonicalDestinationDirPath = out.getCanonicalPath();
-        File destinationFile = new File(out, entry.getName());
+        File destinationFile = new File(out, FilenameUtils.normalize(entry.getName()));
         String canonicalDestinationFile = destinationFile.getCanonicalPath();
         if (!canonicalDestinationFile.startsWith(canonicalDestinationDirPath + File.separator)) {
             throw new RuntimeException("Entry is outside of the target dir: " + entry.getName());
