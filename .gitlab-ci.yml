@@ -11,6 +11,7 @@ variables:
     GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
 
 cache: &global_cache
+  key: ${CI_COMMIT_REF_SLUG}
   paths:
      - .gradle/wrapper
      - .gradle/caches
@@ -28,13 +29,11 @@ sast:
     variables:
         SAST_DEFAULT_ANALYZERS: spotbugs
     stage: test
-    needs: []
     cache:
         <<: *global_cache
 
 build:
     stage: build
-    needs: []
     before_script:
         - apk add git
     script:
@@ -45,7 +44,6 @@ build:
 
 deploy artifacts:
     stage: deploy
-    needs: []
     script: # Placeholder
         - pwd
     artifacts:
@@ -57,7 +55,6 @@ deploy artifacts:
 
 deploy version:
     stage: deploy
-    needs: []
     before_script:
         - apk add openssh git jq bash coreutils curl
         - export GRADLE_USER_HOME=`pwd`/.gradle
