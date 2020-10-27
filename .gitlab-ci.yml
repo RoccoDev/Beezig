@@ -52,14 +52,14 @@ build with artifacts:
             - build/libs/*.jar
         expire_in: 1 week
     except:
-        variables:
-            - $CI_COMMIT_REF_PROTECTED
+        refs:
+            - master
 
 build without artifacts:
     extends: ".build"
     only:
-        variables:
-            - $CI_COMMIT_REF_PROTECTED
+        refs:
+            - master
 
 deploy version:
     stage: deploy
