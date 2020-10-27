@@ -23,6 +23,7 @@ stages:
 sast:
     before_script:
         - apk add git
+        - export GRADLE_USER_HOME=`pwd`/.gradle
     variables:
         SAST_DEFAULT_ANALYZERS: spotbugs
     stage: build
@@ -36,6 +37,7 @@ sast:
     needs: []
     before_script:
         - apk add git
+        - export GRADLE_USER_HOME=`pwd`/.gradle
     script:
         - ./gradlew build
     cache:
@@ -63,6 +65,7 @@ deploy version:
     stage: deploy
     before_script:
         - apk add openssh git jq bash coreutils curl
+        - export GRADLE_USER_HOME=`pwd`/.gradle
     script:
         - chmod go= "$DEPLOY_KEY"
         - mkdir -p ~/.ssh/ || true
