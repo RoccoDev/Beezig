@@ -8,8 +8,40 @@ include:
 - template: Security/SAST.gitlab-ci.yml
 
 stages:
-    - test
+    - build
     - deploy
+
+sast:
+    before_script:
+        - apk add git
+    variables:
+        SAST_DEFAULT_ANALYZERS: spotbugs
+    stage: build
+    needs: []
+
+.build:
+    stage: build
+    needs: []
+    before_script:
+        - apk add git
+    script:
+        - ./gradlew build
+
+build with artifacts:
+    extends: ".build"
+    artifacts:
+        paths:
+            - build/libs/*.jar
+        expire_in: 1 week
+    except:
+        variables:
+            - $CI_COMMIT_REF_PROTECTED
+
+build without artifacts:
+    extends: ".build"
+    only:
+        variables:
+            - $CI_COMMIT_REF_PROTECTED
 
 deploy version:
     stage: deploy
@@ -24,11 +56,4 @@ deploy version:
     only:
         refs:
             - rewrite-2020
-
-sast:
-    before_script:
-        - apk add git
-    variables:
-        SAST_DEFAULT_ANALYZERS: spotbugs
-    stage: test
 ...
