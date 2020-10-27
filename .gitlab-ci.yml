@@ -8,20 +8,8 @@ include:
 - template: Security/SAST.gitlab-ci.yml
 
 stages:
-    - build
-    - deploy
     - test
-
-build:
-    stage: build
-    before_script:
-        - apk add git
-    script:
-    - ./gradlew build
-    artifacts:
-        paths:
-            - build/libs/*.jar
-        expire_in: 1 week
+    - deploy
 
 deploy version:
     stage: deploy
@@ -38,9 +26,14 @@ deploy version:
             - rewrite-2020
 
 sast:
-  variables:
-    SAST_DEFAULT_ANALYZERS: spotbugs
-    SECURE_LOG_LEVEL: debug
-  stage: test
-
+    before_script:
+        - apk add git
+    variables:
+        SAST_DEFAULT_ANALYZERS: spotbugs
+        SECURE_LOG_LEVEL: debug
+    stage: test
+    artifacts:
+        paths:
+            - build/libs/*.jar
+        expire_in: 1 week
 ...
