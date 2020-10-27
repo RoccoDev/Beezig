@@ -40,6 +40,7 @@ deploy version:
 sast:
   variables:
     SAST_DEFAULT_ANALYZERS: spotbugs
+    SECURE_LOG_LEVEL: debug
   stage: test
 
 ...
