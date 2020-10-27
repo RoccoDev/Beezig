@@ -8,16 +8,18 @@ include:
 - template: Security/SAST.gitlab-ci.yml
 
 variables:
-    GRADLE_USER_HOME="$CI_PROJECT_DIR/.gradle"
+    GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
 
 cache: &global_cache
   paths:
      - .gradle/wrapper
      - .gradle/caches
+     - build/libs
   policy: pull
 
 stages:
     - build
+    - test
     - deploy
 
 sast:
@@ -25,13 +27,12 @@ sast:
         - apk add git
     variables:
         SAST_DEFAULT_ANALYZERS: spotbugs
-    stage: build
+    stage: test
     needs: []
     cache:
         <<: *global_cache
 
-
-.build:
+build:
     stage: build
     needs: []
     before_script:
@@ -42,25 +43,21 @@ sast:
         <<: *global_cache
         policy: pull-push
 
-
-build with artifacts:
-    extends: ".build"
+deploy artifacts:
+    stage: deploy
+    needs: []
+    script: # Placeholder
+        - pwd
     artifacts:
         paths:
             - build/libs/*.jar
         expire_in: 1 week
-    except:
-        refs:
-            - master
-
-build without artifacts:
-    extends: ".build"
-    only:
-        refs:
-            - master
+    cache:
+        <<: *global_cache
 
 deploy version:
     stage: deploy
+    needs: []
     before_script:
         - apk add openssh git jq bash coreutils curl
         - export GRADLE_USER_HOME=`pwd`/.gradle
