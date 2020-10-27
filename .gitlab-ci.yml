@@ -24,6 +24,7 @@ stages:
     - deploy
 
 sast:
+    needs: [build]
     before_script:
         - apk add git
     variables:
@@ -43,6 +44,7 @@ build:
         policy: pull-push
 
 deploy artifacts:
+    needs: [build]
     stage: deploy
     script: # Placeholder
         - pwd
@@ -54,6 +56,7 @@ deploy artifacts:
         <<: *global_cache
 
 deploy version:
+    needs: [build]
     stage: deploy
     before_script:
         - apk add openssh git jq bash coreutils curl
