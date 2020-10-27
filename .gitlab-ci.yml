@@ -7,8 +7,8 @@ image: openjdk:8-alpine
 include:
 - template: Security/SAST.gitlab-ci.yml
 
-before_script:
-    - export GRADLE_USER_HOME=`pwd`/.gradle
+variables:
+    GRADLE_USER_HOME="$CI_PROJECT_DIR/.gradle"
 
 cache: &global_cache
   paths:
@@ -23,7 +23,6 @@ stages:
 sast:
     before_script:
         - apk add git
-        - export GRADLE_USER_HOME=`pwd`/.gradle
     variables:
         SAST_DEFAULT_ANALYZERS: spotbugs
     stage: build
@@ -37,7 +36,6 @@ sast:
     needs: []
     before_script:
         - apk add git
-        - export GRADLE_USER_HOME=`pwd`/.gradle
     script:
         - ./gradlew build
     cache:
