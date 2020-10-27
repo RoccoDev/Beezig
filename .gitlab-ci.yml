@@ -15,7 +15,7 @@ cache: &global_cache
   paths:
      - .gradle/wrapper
      - .gradle/caches
-     - build/libs
+     - build
   policy: pull
 
 stages:
