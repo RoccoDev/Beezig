@@ -46,6 +46,7 @@ build:
 deploy artifacts:
     needs: [build]
     stage: deploy
+    image: alpine:latest
     script: # Placeholder
         - pwd
     artifacts:
