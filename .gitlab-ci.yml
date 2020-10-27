@@ -4,9 +4,13 @@
 
 image: openjdk:8-alpine
 
+include:
+- template: Security/SAST.gitlab-ci.yml
+
 stages:
     - build
     - deploy
+    - test
 
 build:
     stage: build
@@ -32,5 +36,10 @@ deploy version:
     only:
         refs:
             - rewrite-2020
+
+sast:
+  variables:
+    SAST_DEFAULT_ANALYZERS: spotbugs
+  stage: test
 
 ...
