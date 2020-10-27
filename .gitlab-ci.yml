@@ -11,7 +11,7 @@ variables:
     GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
 
 cache: &global_cache
-  key: ${CI_COMMIT_REF_SLUG}
+  key: ${CI_COMMIT_SHA}
   paths:
      - .gradle/wrapper
      - .gradle/caches
